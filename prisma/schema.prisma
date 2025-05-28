@@ -1,0 +1,223 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// prisma/schema.prisma
+datasource db {
+  provider  = "postgresql"
+  url  	    = env("DATABASE_URL")
+  // uncomment next line if you use Prisma <5.10
+  // directUrl = env("DATABASE_URL_UNPOOLED")
+}
+
+
+
+model Store{
+  id String @id @default(uuid())
+  name String
+  billboards Billboard[] @relation("StoreToBillboard")
+  categories Category[] @relation("StoreToCategory")
+  colors Color[] @relation("StoreToColor")
+  sizes Size[] @relation("StoreToSize")
+  productLines ProductLine[] @relation("StoreToProductLine")
+  products Product[] @relation("StoreToProduct")
+  units Unit[] @relation("StoreToUnit")
+  savedProducts SavedProduct[] @relation("StoreToSavedProduct")
+  carts Cart[] @relation("StoreToCart")
+  orders Order[] @relation("StoreToOrder")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Billboard{
+  id String @id @default(uuid())
+  label String
+  imageUrl String
+  storeId String
+  maleCategories Category[] @relation("BillboardMaleToCategory" )
+  femaleCategories Category[] @relation("BillboardFemaleToCategory" )
+  store Store @relation("StoreToBillboard",fields:[storeId],references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category{
+  id String @id @default(uuid())
+  name String
+  department String
+  billboardMaleId String?
+  billboardMale Billboard? @relation("BillboardMaleToCategory",fields:[billboardMaleId],references: [id])
+  billboardFemaleId String?
+  billboardFemale Billboard? @relation("BillboardFemaleToCategory",fields:[billboardFemaleId],references: [id])
+  storeId String
+  store Store @relation("StoreToCategory",fields:[storeId],references: [id])
+  isArchived Boolean
+  products Product[] @relation("CategoryToProduct")
+  productLines ProductLine[] @relation("CategoryToProductLine")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Color{
+  id String @id @default(uuid())
+  name String
+  value String
+  storeId String
+  store Store @relation("StoreToColor",fields:[storeId],references: [id])
+  products Product[] @relation("ColorToProduct")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Size{
+  id String @id @default(uuid())
+   name String
+  value String
+  department String
+  storeId String
+  store Store @relation("StoreToSize",fields:[storeId],references: [id])
+  units Unit[] @relation("SizeToUnit")
+  cartItems CartItem[] @relation("SizeToCartItem")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProductLine{
+  id String @id @default(uuid())
+  name String
+  department String
+  categoryId String
+  isArchived Boolean
+  storeId String
+  store Store @relation("StoreToProductLine",fields:[storeId],references: [id])
+  category Category @relation("CategoryToProductLine",fields:[categoryId],references: [id])
+  products Product[] @relation("ProductLineToProduct")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product{
+  id String @id @default(uuid())
+  name String
+  department String
+  price Decimal
+  desc String
+  productLineId String
+  productLine ProductLine @relation("ProductLineToProduct",fields:[productLineId],references: [id])
+  isArchived Boolean
+  isFeatured Boolean
+  images Image[] @relation("ProductToImage")
+  units Unit[] @relation("ProductToUnit")
+  cartItems CartItem[] @relation("ProductToCartItem")
+  savedProducts SavedProduct[] @relation("ProductToSavedProduct")
+  storeId String
+  store Store @relation("StoreToProduct",fields:[storeId],references: [id])
+  categoryId String
+  category Category @relation("CategoryToProduct",fields:[categoryId],references: [id])
+  colorId String
+  color Color @relation("ColorToProduct",fields:[colorId],references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Image{
+  id String @id @default(uuid())
+  url String
+  productId String
+  product Product @relation("ProductToImage",fields:[productId],references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Unit{
+  id String @id @default(uuid())
+  productId String
+  storeId String
+  store Store @relation("StoreToUnit",fields:[storeId],references: [id])
+  product Product @relation("ProductToUnit",fields:[productId],references: [id])
+  sizeId String
+  size Size @relation("SizeToUnit",fields:[sizeId],references: [id])
+  isArchived Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SavedProduct{
+  id String @id @default(uuid())
+  storeId String
+  store Store @relation("StoreToSavedProduct",fields:[storeId],references: [id])
+  userId String
+  productId String
+  product Product @relation("ProductToSavedProduct",fields:[productId],references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Cart {
+  id String @id @default(uuid())
+  storeId String
+  userId String
+  store Store @relation("StoreToCart",fields:[storeId],references: [id])
+  cartItems CartItem[] @relation("CartToCartItem")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CartItem {
+  id String @id @default(uuid())
+  cartId String
+  cart Cart @relation("CartToCartItem",fields:[cartId],references: [id], onDelete: Cascade)
+  productId String
+  product Product @relation("ProductToCartItem",fields:[productId],references: [id], onDelete: Cascade)
+  quantity Decimal
+  sizeId String
+  size Size @relation("SizeToCartItem",fields:[sizeId],references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order{
+  id String @id @default(uuid())
+  storeId String
+  userId String?
+  userName String?
+  price Decimal
+  shippingPrice Decimal
+  shippingOption String
+  status String
+  phone String @default("")
+  address String @default("")
+  isPaid Boolean
+  store Store @relation("StoreToOrder",fields:[storeId],references: [id])
+  orderItems OrderItem[] @relation("OrderToOrderItem")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OrderItem{
+  id String @id @default(uuid())
+  orderId String
+  productId String
+  unitId String
+  sizeId String
+  colorId String
+  name String
+  colorName String
+  sizeName String
+  imageUrl String
+  price Decimal
+  order Order @relation("OrderToOrderItem",fields:[orderId],references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ShiftDate{
+  id String @id @default(uuid())
+  createdAt DateTime @default(now())
+}
