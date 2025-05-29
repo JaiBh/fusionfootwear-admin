@@ -33,7 +33,7 @@ function AlertModal({
     setMounted(true);
   }, []);
 
-  if (!mounted) return;
+  if (!mounted) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
