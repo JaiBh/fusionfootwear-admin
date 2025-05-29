@@ -2,9 +2,9 @@ import Container from "@/components/Container";
 import PageTitle from "@/components/PageTitle";
 import { Button } from "@/components/ui/button";
 import prismadb from "@/lib/prismadb";
-import Link from "next/link";
 import { format } from "date-fns";
 import CategoryClient from "./components/ProductLineClient";
+import RouteLink from "@/components/RouteLink";
 
 async function ProductLinesPage() {
   const productLines = await prismadb.productLine.findMany({
@@ -31,15 +31,15 @@ async function ProductLinesPage() {
   });
   return (
     <Container>
-      <div className="flex items-center justify-between border-b">
+      <div className="md:flex pb-4 md:items-center md:justify-between border-b">
         <PageTitle
           title={`Product Lines (${productLines.length})`}
           desc="Manage Product Lines for your store"
         ></PageTitle>
-        <Button asChild>
-          <Link href={`/productLines/new`} className="font-bold">
+        <Button asChild className="max-md:w-full">
+          <RouteLink href={`/productLines/new`} className="font-bold">
             + Add New
-          </Link>
+          </RouteLink>
         </Button>
       </div>
       <CategoryClient data={formattedProductLines}></CategoryClient>

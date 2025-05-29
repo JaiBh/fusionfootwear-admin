@@ -2,9 +2,9 @@ import Container from "@/components/Container";
 import PageTitle from "@/components/PageTitle";
 import { Button } from "@/components/ui/button";
 import prismadb from "@/lib/prismadb";
-import Link from "next/link";
 import { format } from "date-fns";
 import CategoryClient from "./components/CategoryClient";
+import RouteLink from "@/components/RouteLink";
 
 async function CategoriesPage() {
   const categories = await prismadb.category.findMany({
@@ -33,15 +33,15 @@ async function CategoriesPage() {
   });
   return (
     <Container>
-      <div className="flex items-center justify-between border-b">
+      <div className="md:flex md:items-center md:justify-between border-b pb-4">
         <PageTitle
           title={`Categories (${categories.length})`}
           desc="Manage Categories for your store"
         ></PageTitle>
-        <Button asChild>
-          <Link href={`/categories/new`} className="font-bold">
+        <Button asChild className="max-md:w-full">
+          <RouteLink href={`/categories/new`} className="font-bold">
             + Add New
-          </Link>
+          </RouteLink>
         </Button>
       </div>
       <CategoryClient data={formattedCategories}></CategoryClient>

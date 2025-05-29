@@ -6,16 +6,21 @@ import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import toast from "react-hot-toast";
 import Image from "next/image";
-import Link from "next/link";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import RouteLink from "@/components/RouteLink";
 
-interface FormattedOrderItem extends OrderItem {
+interface FormattedOrderItem extends Omit<OrderItem, "price"> {
   quantity: number;
+  price: number;
 }
 
 interface OrderInfoProps {
-  order: Order & {
-    orderItems: OrderItem[];
+  order: Omit<Order, "price" | "shippingPrice"> & {
+    orderItems: (Omit<OrderItem, "price"> & {
+      price: number;
+    })[];
+    price: number;
+    shippingPrice: number;
   };
 }
 
@@ -158,7 +163,7 @@ function OrderInfo({ order }: OrderInfoProps) {
               >
                 <div className="flex space-x-4 items-center">
                   <div className="aspect-square relative h-20">
-                    <Link href={`/products/${orderItem.productId}`}>
+                    <RouteLink href={`/products/${orderItem.productId}`}>
                       {orderItem.imageUrl ? (
                         <Image
                           src={orderItem.imageUrl}
@@ -172,7 +177,7 @@ function OrderInfo({ order }: OrderInfoProps) {
                           No Image Available
                         </div>
                       )}
-                    </Link>
+                    </RouteLink>
                   </div>
                   <div className="space-y-3">
                     <h3 className="font-semibold">{orderItem.name}</h3>

@@ -20,7 +20,7 @@ function Sidebar() {
         <SheetHeader>
           <SheetTitle>FusionFootwear</SheetTitle>
         </SheetHeader>
-        <div className="mt-4">
+        <div className="mt-8">
           <SidebarLink href={"/"} text="Overview"></SidebarLink>
           <SidebarLink href={"/billboards"} text="Billboards"></SidebarLink>
           <SidebarLink href={"/categories"} text="Categories"></SidebarLink>

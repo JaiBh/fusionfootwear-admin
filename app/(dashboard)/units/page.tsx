@@ -2,9 +2,9 @@ import Container from "@/components/Container";
 import PageTitle from "@/components/PageTitle";
 import { Button } from "@/components/ui/button";
 import prismadb from "@/lib/prismadb";
-import Link from "next/link";
 import { format } from "date-fns";
 import UnitClient from "./components/UnitClient";
+import RouteLink from "@/components/RouteLink";
 
 async function UnitsPage() {
   const units = await prismadb.unit.findMany({
@@ -42,15 +42,15 @@ async function UnitsPage() {
   });
   return (
     <Container>
-      <div className="flex items-center justify-between border-b">
+      <div className="md:flex md:items-center md:justify-between border-b pb-4">
         <PageTitle
           title={`Units (${units.length})`}
           desc="Manage product units for your store"
         ></PageTitle>
-        <Button asChild>
-          <Link href={`/units/new`} className="font-bold">
+        <Button asChild className="max-md:w-full">
+          <RouteLink href={`/units/new`} className="font-bold">
             + Add New
-          </Link>
+          </RouteLink>
         </Button>
       </div>
       <UnitClient data={formattedUnits}></UnitClient>

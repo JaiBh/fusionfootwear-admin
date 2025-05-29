@@ -2,9 +2,9 @@ import Container from "@/components/Container";
 import PageTitle from "@/components/PageTitle";
 import { Button } from "@/components/ui/button";
 import prismadb from "@/lib/prismadb";
-import Link from "next/link";
 import { format } from "date-fns";
 import ColorClient from "./components/ColorClient";
+import RouteLink from "@/components/RouteLink";
 
 async function ColorsPage() {
   const colors = await prismadb.color.findMany({
@@ -26,15 +26,15 @@ async function ColorsPage() {
   });
   return (
     <Container>
-      <div className="flex items-center justify-between border-b">
+      <div className="md:flex md:items-center md:justify-between border-b pb-4">
         <PageTitle
           title={`Colors (${colors.length})`}
           desc="Manage colors for your store"
         ></PageTitle>
-        <Button asChild>
-          <Link href={`/colors/new`} className="font-bold">
+        <Button asChild className="max-md:w-full">
+          <RouteLink href={`/colors/new`} className="font-bold">
             + Add New
-          </Link>
+          </RouteLink>
         </Button>
       </div>
       <ColorClient data={formattedColors}></ColorClient>

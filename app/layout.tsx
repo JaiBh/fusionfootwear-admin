@@ -4,6 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import ToastProvider from "@/providers/ToastProvider";
+import LoadingClientWrapper from "@/components/LoadingClientWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,7 +42,7 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <ToastProvider></ToastProvider>
-            {children}
+            <LoadingClientWrapper>{children}</LoadingClientWrapper>
           </ThemeProvider>
         </body>
       </html>

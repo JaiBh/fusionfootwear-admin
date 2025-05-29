@@ -1,9 +1,9 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SheetClose } from "../ui/sheet";
+import RouteLink from "../RouteLink";
 
 interface SidebarLinkProps {
   text: string;
@@ -14,7 +14,7 @@ function SidebarLink({ text, href }: SidebarLinkProps) {
   const pathname = usePathname();
   const active = pathname === href;
   return (
-    <Link
+    <RouteLink
       href={href}
       className={cn(
         "block transition-all rounded-r-lg",
@@ -31,7 +31,7 @@ function SidebarLink({ text, href }: SidebarLinkProps) {
       >
         {text}
       </SheetClose>
-    </Link>
+    </RouteLink>
   );
 }
 export default SidebarLink;

@@ -2,9 +2,9 @@ import Container from "@/components/Container";
 import PageTitle from "@/components/PageTitle";
 import { Button } from "@/components/ui/button";
 import prismadb from "@/lib/prismadb";
-import Link from "next/link";
 import { format } from "date-fns";
 import ProductClient from "./components/ProductClient";
+import RouteLink from "@/components/RouteLink";
 
 async function ProductsPage() {
   const products = await prismadb.product.findMany({
@@ -38,15 +38,15 @@ async function ProductsPage() {
   });
   return (
     <Container>
-      <div className="flex items-center justify-between border-b">
+      <div className="md:lex md:items-center md:justify-between border-b pb-4">
         <PageTitle
           title={`Products (${products.length})`}
           desc="Manage products for your store"
         ></PageTitle>
-        <Button asChild>
-          <Link href={`/products/new`} className="font-bold">
+        <Button asChild className="max-md:w-full">
+          <RouteLink href={`/products/new`} className="font-bold">
             + Add New
-          </Link>
+          </RouteLink>
         </Button>
       </div>
       <ProductClient data={formattedProducts}></ProductClient>

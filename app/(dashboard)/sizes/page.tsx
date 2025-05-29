@@ -2,9 +2,9 @@ import Container from "@/components/Container";
 import PageTitle from "@/components/PageTitle";
 import { Button } from "@/components/ui/button";
 import prismadb from "@/lib/prismadb";
-import Link from "next/link";
 import { format } from "date-fns";
 import SizeClient from "./components/SizeClient";
+import RouteLink from "@/components/RouteLink";
 
 async function SizesPage() {
   const sizes = await prismadb.size.findMany({
@@ -26,15 +26,15 @@ async function SizesPage() {
     });
   return (
     <Container>
-      <div className="flex items-center justify-between border-b">
+      <div className="md:flex md:items-center md:justify-between border-b pb-4">
         <PageTitle
           title={`Sizes (${sizes.length})`}
           desc="Manage sizes for your store"
         ></PageTitle>
-        <Button asChild>
-          <Link href={`/sizes/new`} className="font-bold">
+        <Button asChild className="max-md:w-full">
+          <RouteLink href={`/sizes/new`} className="font-bold">
             + Add New
-          </Link>
+          </RouteLink>
         </Button>
       </div>
       <SizeClient data={formattedSizes}></SizeClient>

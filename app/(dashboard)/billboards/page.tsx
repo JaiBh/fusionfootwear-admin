@@ -2,9 +2,9 @@ import Container from "@/components/Container";
 import PageTitle from "@/components/PageTitle";
 import { Button } from "@/components/ui/button";
 import prismadb from "@/lib/prismadb";
-import Link from "next/link";
 import BillboardClient from "./components/BillboardClient";
 import { format } from "date-fns";
+import RouteLink from "@/components/RouteLink";
 
 async function BillboardsPage() {
   const billboards = await prismadb.billboard.findMany({
@@ -25,15 +25,15 @@ async function BillboardsPage() {
   });
   return (
     <Container>
-      <div className="flex items-center justify-between border-b">
+      <div className="md:flex md:items-center md:justify-between border-b pb-4">
         <PageTitle
           title={`Billboards (${billboards.length})`}
           desc="Manage billboards for your store"
         ></PageTitle>
-        <Button asChild>
-          <Link href={`/billboards/new`} className="font-bold">
+        <Button asChild className="max-md:w-full">
+          <RouteLink href={`/billboards/new`} className="font-bold">
             + Add New
-          </Link>
+          </RouteLink>
         </Button>
       </div>
       <BillboardClient data={formattedBillboards}></BillboardClient>
