@@ -89,7 +89,7 @@ function ColorForm({ initialData }: ColorFormProps) {
       toast.error(
         "Make sure you have deleted all products using this color, first."
       );
-      console.log("Error deleting color", Error);
+      console.log("Error deleting color", error);
       setLoading(false);
     }
   };

@@ -87,7 +87,7 @@ function BillboardForm({ initialData }: BillboardFormProps) {
       router.replace("/billboards");
     } catch (error) {
       toast.error("Something went wrong...");
-      console.log("Error deleting billboard", Error);
+      console.log("Error deleting billboard", error);
       setLoading(false);
     }
   };

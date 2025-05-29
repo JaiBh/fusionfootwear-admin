@@ -143,7 +143,7 @@ function CategoryForm({ initialData, billboards }: CategoryFormProps) {
       toast.error(
         "Make sure you have deleted all products using this category, first."
       );
-      console.log("Error deleting category", Error);
+      console.log("Error deleting category", error);
       setLoading(false);
     }
   };
