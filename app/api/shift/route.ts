@@ -16,8 +16,7 @@ export async function PATCH(req: Request) {
       const today = new Date().getDate();
       const orderDate = new Date(order.createdAt).getDate();
       if (today - orderDate >= daysPassed) {
-        const newOrderDate = new Date();
-        newOrderDate.setDate(orderDate + daysPassed);
+        const newOrderDate = new Date(orderDate + daysPassed);
         await prismadb.order.update({
           where: {
             id: order.id,
