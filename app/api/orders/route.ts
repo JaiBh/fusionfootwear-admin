@@ -6,7 +6,7 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get("userId");
     let isPaid: string | null | boolean | undefined =
-      searchParams.get("isFeatured");
+      searchParams.get("isPaid");
 
     if (!userId) {
       return new NextResponse("User Id is required", { status: 400 });

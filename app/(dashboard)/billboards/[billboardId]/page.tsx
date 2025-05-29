@@ -14,7 +14,7 @@ async function BillboardPage({
     },
   });
   return (
-    <Container>
+    <Container className="mb-6">
       <BillboardForm initialData={billboard}></BillboardForm>
     </Container>
   );
