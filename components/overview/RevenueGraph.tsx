@@ -8,7 +8,6 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import { Monitor } from "lucide-react";
 import {
   Bar,
   BarChart,

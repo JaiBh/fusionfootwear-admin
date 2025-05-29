@@ -10,7 +10,9 @@ export async function POST(req: Request) {
     const { label, imageUrl } = body;
 
     if (!userId || !isAdmin(userId)) {
-      return new NextResponse("Unauthenticated", { status: 401 });
+      return new NextResponse("Unauthenticated, must be admin", {
+        status: 401,
+      });
     }
     if (!label) {
       return new NextResponse("Label is required", { status: 400 });
@@ -39,7 +41,7 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     const billboards = await prismadb.billboard.findMany({
       where: {

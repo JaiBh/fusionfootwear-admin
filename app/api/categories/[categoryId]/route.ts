@@ -13,7 +13,9 @@ export async function DELETE(
     const { userId } = await auth();
 
     if (!userId || !isAdmin(userId)) {
-      return new NextResponse("Unauthenticated", { status: 401 });
+      return new NextResponse("Unauthenticated, must be admin", {
+        status: 401,
+      });
     }
 
     const category = await prismadb.category.delete({
@@ -50,7 +52,9 @@ export async function PATCH(
       body;
 
     if (!userId || !isAdmin(userId)) {
-      return new NextResponse("Unauthenticated", { status: 401 });
+      return new NextResponse("Unauthenticated, must be admin", {
+        status: 401,
+      });
     }
 
     if (!name) {

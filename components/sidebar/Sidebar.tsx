@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import SidebarLink from "./SidebarLink";
 import {
   Sheet,

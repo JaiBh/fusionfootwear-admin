@@ -83,13 +83,13 @@ function UnitForm({ initialData, sizes, products }: UnitFormProps) {
     try {
       setLoading(true);
       if (initialData) {
-        const resp = await axios.patch(`/api/units/${params.unitId}`, data);
+        await axios.patch(`/api/units/${params.unitId}`, data);
       } else {
         const array = Array.from({ length: data.quantity }, (_, i) => ({
           id: i + 1,
         }));
         array.forEach(async (item) => {
-          const resp = await axios.post(`/api/units`, data);
+          await axios.post(`/api/units`, data);
         });
       }
       router.refresh();
@@ -111,12 +111,13 @@ function UnitForm({ initialData, sizes, products }: UnitFormProps) {
   const onDelete = async () => {
     try {
       setLoading(true);
-      const resp = await axios.delete(`/api/units/${params.unitId}`);
+      await axios.delete(`/api/units/${params.unitId}`);
       router.refresh();
       toast.success("Unit deleted!");
       router.replace("/units");
     } catch (error) {
       toast.error("Oops, something went wrong.");
+      console.log("Error deleting unit", error);
       setLoading(false);
     }
   };

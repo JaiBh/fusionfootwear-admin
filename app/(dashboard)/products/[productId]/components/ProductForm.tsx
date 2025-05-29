@@ -115,10 +115,7 @@ function ProductForm({
         return;
       }
       if (initialData) {
-        const resp = await axios.patch(
-          `/api/products/${params.productId}`,
-          data
-        );
+        await axios.patch(`/api/products/${params.productId}`, data);
         if (archiveUnits) {
           await axios.patch("/api/units", {
             action: "archive",
@@ -132,7 +129,7 @@ function ProductForm({
           });
         }
       } else {
-        const resp = await axios.post(`/api/products`, data);
+        await axios.post(`/api/products`, data);
       }
       router.refresh();
       router.replace("/products");
@@ -150,12 +147,13 @@ function ProductForm({
   const onDelete = async () => {
     try {
       setLoading(true);
-      const resp = await axios.delete(`/api/products/${params.productId}`);
+      await axios.delete(`/api/products/${params.productId}`);
       router.refresh();
       toast.success("Product deleted!");
       router.replace("/products");
     } catch (error) {
       toast.error("Something went wrong...");
+      console.log("Error deleting product", error);
       setLoading(false);
     }
   };

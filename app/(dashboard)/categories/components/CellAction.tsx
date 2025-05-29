@@ -37,6 +37,7 @@ function CellAction({ data }: CellActionProps) {
       toast.error(
         "Make sure you have deleted all products using this category, first."
       );
+      console.log("Error deleting category", error);
     } finally {
       setLoading(false);
     }

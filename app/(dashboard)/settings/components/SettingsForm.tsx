@@ -42,11 +42,12 @@ function SettingsForm({ store }: { store: Store | null }) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setLoading(true);
-      const resp = await axios.patch(`/api/stores`, values);
+      await axios.patch(`/api/stores`, values);
       router.refresh();
       toast.success("Store updated!");
     } catch (error) {
       toast.error("Something went wrong...");
+      console.log("Error editing store name", error);
     } finally {
       setLoading(false);
     }

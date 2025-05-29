@@ -61,12 +61,9 @@ function BillboardForm({ initialData }: BillboardFormProps) {
     try {
       setLoading(true);
       if (initialData) {
-        const resp = await axios.patch(
-          `/api/billboards/${params.billboardId}`,
-          data
-        );
+        await axios.patch(`/api/billboards/${params.billboardId}`, data);
       } else {
-        const resp = await axios.post(`/api/billboards`, data);
+        await axios.post(`/api/billboards`, data);
       }
       router.refresh();
       router.replace("/billboards");
@@ -84,12 +81,13 @@ function BillboardForm({ initialData }: BillboardFormProps) {
   const onDelete = async () => {
     try {
       setLoading(true);
-      const resp = await axios.delete(`/api/billboards/${params.billboardId}`);
+      await axios.delete(`/api/billboards/${params.billboardId}`);
       router.refresh();
       toast.success("Billboard deleted!");
       router.replace("/billboards");
     } catch (error) {
       toast.error("Something went wrong...");
+      console.log("Error deleting billboard", Error);
       setLoading(false);
     }
   };

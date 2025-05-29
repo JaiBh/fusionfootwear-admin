@@ -9,7 +9,9 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { name, categoryId, department, isArchived } = body;
     if (!userId || !isAdmin(userId)) {
-      return new NextResponse("Unauthenticated", { status: 401 });
+      return new NextResponse("Unauthenticated, must be admin", {
+        status: 401,
+      });
     }
     if (!name) {
       return new NextResponse("Name is required", { status: 400 });
@@ -59,7 +61,7 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     const productLines = await prismadb.productLine.findMany({
       where: {

@@ -37,6 +37,7 @@ function CellAction({ data }: CellActionProps) {
       toast.error(
         "Make sure you have deleted all products using this color, first."
       );
+      console.log("Error deleting color", Error);
     } finally {
       setLoading(false);
     }

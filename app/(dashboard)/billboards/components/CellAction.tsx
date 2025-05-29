@@ -37,6 +37,7 @@ function CellAction({ data }: CellActionProps) {
       toast.error(
         "Make sure you have deleted all categories using this billboard, first."
       );
+      console.log("Error deleting billboard", error);
     } finally {
       setLoading(false);
     }

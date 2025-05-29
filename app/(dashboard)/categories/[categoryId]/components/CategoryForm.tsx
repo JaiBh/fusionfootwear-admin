@@ -115,12 +115,9 @@ function CategoryForm({ initialData, billboards }: CategoryFormProps) {
       }
 
       if (initialData) {
-        const resp = await axios.patch(
-          `/api/categories/${params.categoryId}`,
-          data
-        );
+        await axios.patch(`/api/categories/${params.categoryId}`, data);
       } else {
-        const resp = await axios.post(`/api/categories`, data);
+        await axios.post(`/api/categories`, data);
       }
       router.refresh();
       router.replace("/categories");
@@ -138,7 +135,7 @@ function CategoryForm({ initialData, billboards }: CategoryFormProps) {
   const onDelete = async () => {
     try {
       setLoading(true);
-      const resp = await axios.delete(`/api/categories/${params.categoryId}`);
+      await axios.delete(`/api/categories/${params.categoryId}`);
       router.refresh();
       toast.success("Category deleted!");
       router.replace("/categories");
@@ -146,6 +143,7 @@ function CategoryForm({ initialData, billboards }: CategoryFormProps) {
       toast.error(
         "Make sure you have deleted all products using this category, first."
       );
+      console.log("Error deleting category", Error);
       setLoading(false);
     }
   };

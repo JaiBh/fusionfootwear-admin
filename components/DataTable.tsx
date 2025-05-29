@@ -88,8 +88,8 @@ export function DataTable<TData, TValue>({
     try {
       setLoading(true);
       for (const row of table.getFilteredSelectedRowModel().rows) {
-        // @ts-ignore
-        let id = row.original.id;
+        // @ts-expect-error
+        const id = row.original.id;
         await axios.delete(`/api/${api}/${id}`);
       }
       setRowSelection({});
@@ -100,6 +100,7 @@ export function DataTable<TData, TValue>({
       toast.error(
         `Something went wrong. Have you checked that you deleted anything that is linked to this item?`
       );
+      console.log("Error deleting item(s)", error);
     } finally {
       setLoading(false);
     }

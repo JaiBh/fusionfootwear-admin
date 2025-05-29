@@ -12,7 +12,7 @@ export async function PATCH(req: Request) {
       },
     });
 
-    const updatedOrders = orders.map(async (order) => {
+    orders.forEach(async (order) => {
       const today = new Date().getDate();
       const orderDate = new Date(order.createdAt).getDate();
       if (today - orderDate >= daysPassed) {

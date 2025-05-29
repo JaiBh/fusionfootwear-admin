@@ -13,7 +13,9 @@ export async function DELETE(
     const { userId } = await auth();
 
     if (!userId || !isAdmin(userId)) {
-      return new NextResponse("Unauthenticated", { status: 401 });
+      return new NextResponse("Unauthenticated, must be admin", {
+        status: 401,
+      });
     }
 
     const unit = await prismadb.unit.delete({
@@ -47,7 +49,9 @@ export async function PATCH(
     const { productId, sizeId, isArchived } = body;
 
     if (!userId || !isAdmin(userId)) {
-      return new NextResponse("Unauthenticated", { status: 401 });
+      return new NextResponse("Unauthenticated, must be admin", {
+        status: 401,
+      });
     }
 
     if (!productId) {

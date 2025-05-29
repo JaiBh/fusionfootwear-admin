@@ -13,7 +13,9 @@ export async function DELETE(
     const { sizeId } = await params;
 
     if (!userId || !isAdmin(userId)) {
-      return new NextResponse("Unauthenticated", { status: 401 });
+      return new NextResponse("Unauthenticated, must be admin", {
+        status: 401,
+      });
     }
 
     if (!sizeId) {
@@ -52,7 +54,9 @@ export async function PATCH(
     const { sizeId } = await params;
 
     if (!userId || !isAdmin(userId)) {
-      return new NextResponse("Unauthenticated", { status: 401 });
+      return new NextResponse("Unauthenticated, must be admin", {
+        status: 401,
+      });
     }
 
     if (!name) {

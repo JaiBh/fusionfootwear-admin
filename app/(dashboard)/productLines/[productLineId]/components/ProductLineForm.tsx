@@ -82,12 +82,9 @@ function ProductLineForm({ initialData, categories }: ProductLineFormProps) {
         return;
       }
       if (initialData) {
-        const resp = await axios.patch(
-          `/api/productLines/${params.productLineId}`,
-          data
-        );
+        await axios.patch(`/api/productLines/${params.productLineId}`, data);
       } else {
-        const resp = await axios.post(`/api/productLines`, data);
+        await axios.post(`/api/productLines`, data);
       }
       router.refresh();
       router.replace("/productLines");
@@ -105,9 +102,7 @@ function ProductLineForm({ initialData, categories }: ProductLineFormProps) {
   const onDelete = async () => {
     try {
       setLoading(true);
-      const resp = await axios.delete(
-        `/api/productLines/${params.productLineId}`
-      );
+      await axios.delete(`/api/productLines/${params.productLineId}`);
       router.refresh();
       toast.success("Product Line deleted!");
       router.replace("/productLines");
@@ -115,6 +110,7 @@ function ProductLineForm({ initialData, categories }: ProductLineFormProps) {
       toast.error(
         "Make sure you have deleted all products using this product line, first."
       );
+      console.log("Error deleting product-line", error);
       setLoading(false);
     }
   };

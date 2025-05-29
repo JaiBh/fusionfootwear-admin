@@ -2,10 +2,15 @@ import Container from "@/components/Container";
 import prismadb from "@/lib/prismadb";
 import UnitForm from "./components/UnitForm";
 
-async function CategoryPage({ params }: { params: { unitId: string } }) {
+async function CategoryPage({
+  params,
+}: {
+  params: Promise<{ unitId: string }>;
+}) {
+  const { unitId } = await params;
   const unit = await prismadb.unit.findUnique({
     where: {
-      id: params.unitId,
+      id: unitId,
     },
   });
 

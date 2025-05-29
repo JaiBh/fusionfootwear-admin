@@ -75,9 +75,9 @@ function SizeForm({ initialData }: SizeFormProps) {
         return;
       }
       if (initialData) {
-        const resp = await axios.patch(`/api/sizes/${params.sizeId}`, data);
+        await axios.patch(`/api/sizes/${params.sizeId}`, data);
       } else {
-        const resp = await axios.post(`/api/sizes`, data);
+        await axios.post(`/api/sizes`, data);
       }
       router.refresh();
       router.replace("/sizes");
@@ -95,7 +95,7 @@ function SizeForm({ initialData }: SizeFormProps) {
   const onDelete = async () => {
     try {
       setLoading(true);
-      const resp = await axios.delete(`/api/sizes/${params.sizeId}`);
+      await axios.delete(`/api/sizes/${params.sizeId}`);
       router.refresh();
       toast.success("Size deleted!");
       router.replace("/sizes");
@@ -103,6 +103,7 @@ function SizeForm({ initialData }: SizeFormProps) {
       toast.error(
         "Make sure you have deleted all products using this size, first."
       );
+      console.log("Error deleting size", error);
       setLoading(false);
     }
   };

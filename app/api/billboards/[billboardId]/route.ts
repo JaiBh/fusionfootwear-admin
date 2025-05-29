@@ -12,7 +12,9 @@ export async function DELETE(
     const { billboardId } = await params;
     const { userId } = await auth();
     if (!userId || !isAdmin(userId)) {
-      return new NextResponse("Unauthenticated", { status: 401 });
+      return new NextResponse("Unauthenticated, must be admin", {
+        status: 401,
+      });
     }
 
     const billboard = await prismadb.billboard.delete({
@@ -49,7 +51,9 @@ export async function PATCH(
     const { label, imageUrl } = body;
 
     if (!userId || !isAdmin(userId)) {
-      return new NextResponse("Unauthenticated", { status: 401 });
+      return new NextResponse("Unauthenticated, must be admin", {
+        status: 401,
+      });
     }
 
     if (!label) {

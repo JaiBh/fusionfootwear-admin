@@ -23,7 +23,9 @@ export async function POST(req: Request) {
     const { sizeId, productId, isArchived } = body;
 
     if (!userId || !isAdmin(userId)) {
-      return new NextResponse("Unauthenticated", { status: 401 });
+      return new NextResponse("Unauthenticated, must be admin", {
+        status: 401,
+      });
     }
     if (!productId) {
       return new NextResponse("Product Id is required", { status: 400 });

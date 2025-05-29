@@ -37,6 +37,7 @@ function CellAction({ data }: CellActionProps) {
       toast.error(
         "Make sure you have deleted all products using this size, first."
       );
+      console.log("Error deleting size", error);
     } finally {
       setLoading(false);
     }

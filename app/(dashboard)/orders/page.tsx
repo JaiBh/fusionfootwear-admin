@@ -1,8 +1,6 @@
 import Container from "@/components/Container";
 import PageTitle from "@/components/PageTitle";
-import { Button } from "@/components/ui/button";
 import prismadb from "@/lib/prismadb";
-import Link from "next/link";
 import { format } from "date-fns";
 import CategoryClient from "./components/OrderClient";
 

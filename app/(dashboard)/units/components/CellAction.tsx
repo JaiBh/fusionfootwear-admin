@@ -35,6 +35,7 @@ function CellAction({ data }: CellActionProps) {
       setOpen(false);
     } catch (error) {
       toast.error("Oops, something went wrong.");
+      console.log("Error deleting unit", error);
     } finally {
       setLoading(false);
     }

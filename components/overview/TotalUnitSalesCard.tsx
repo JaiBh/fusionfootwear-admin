@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select";
 import { Order, OrderItem } from "@prisma/client";
-import { formatter } from "@/lib/utils";
 
 interface TotalUnitSalesCardProps {
   orders: (Omit<Order, "price" | "shippingPrice"> & {

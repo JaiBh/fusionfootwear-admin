@@ -21,7 +21,9 @@ export async function POST(req: Request) {
       images,
     } = body;
     if (!userId || !isAdmin(userId)) {
-      return new NextResponse("Unauthenticated", { status: 400 });
+      return new NextResponse("Unauthenticated, must be admin", {
+        status: 400,
+      });
     }
     if (!name) {
       return new NextResponse("Name is required", { status: 400 });
