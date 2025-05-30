@@ -8,10 +8,10 @@ function AdjustOrderDates({ shiftDate }: { shiftDate: ShiftDate | null }) {
   useEffect(() => {
     const init = async () => {
       if (shiftDate) {
-        const today = new Date().getDate();
-        const shiftDay = new Date(shiftDate.createdAt).getDate();
-        if (today - shiftDay > 0) {
-          await axios.patch("/api/shift", { daysPassed: today - shiftDay });
+        const today = new Date();
+        const shiftDay = new Date(shiftDate.createdAt);
+        if (today.getDate() !== shiftDay.getDate()) {
+          await axios.patch("/api/shift");
         }
       }
     };

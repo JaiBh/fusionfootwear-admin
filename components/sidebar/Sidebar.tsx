@@ -1,5 +1,3 @@
-"use client";
-
 import SidebarLink from "./SidebarLink";
 import {
   Sheet,
@@ -9,8 +7,14 @@ import {
   SheetTrigger,
 } from "../ui/sheet";
 import { Menu } from "lucide-react";
+import prismadb from "@/lib/prismadb";
 
-function Sidebar() {
+async function Sidebar() {
+  const store = await prismadb.store.findUnique({
+    where: {
+      id: process.env.STORE_ID,
+    },
+  });
   return (
     <Sheet>
       <SheetTrigger>
@@ -18,7 +22,7 @@ function Sidebar() {
       </SheetTrigger>
       <SheetContent side={"left"}>
         <SheetHeader>
-          <SheetTitle>FusionFootwear</SheetTitle>
+          <SheetTitle>{store?.name || "FusionFootwear"}</SheetTitle>
         </SheetHeader>
         <div className="mt-8">
           <SidebarLink href={"/"} text="Overview"></SidebarLink>

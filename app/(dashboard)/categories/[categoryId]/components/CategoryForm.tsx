@@ -25,6 +25,7 @@ import AlertModal from "@/components/AlertModal";
 import BillboardSelect from "@/components/BillboardSelect";
 import { CustomCheckbox } from "@/components/ui/CustomCheckbox";
 import DepartmentSelect from "@/components/DepartmentSelect";
+import { useLoadingAtom } from "@/features/global/store/useLoadingAtom";
 
 const formSchema = z.object({
   name: z
@@ -51,7 +52,7 @@ function CategoryForm({ initialData, billboards }: CategoryFormProps) {
   const toastMessage = initialData
     ? "Category updated!"
     : "New category created!";
-  const [loading, setLoading] = useState(false);
+  const [{ isLoading }, setLoadingAtom] = useLoadingAtom();
   const [open, setOpen] = useState(false);
   const params = useParams();
 
@@ -81,17 +82,19 @@ function CategoryForm({ initialData, billboards }: CategoryFormProps) {
 
   const onSubmit = async (data: CategoryFormValues) => {
     try {
-      setLoading(true);
+      setLoadingAtom({ isLoading: true });
       const departmentTypes = ["Male", "Female", "Unisex"];
       if (!departmentTypes.includes(data.department)) {
         toast.error("Please select a valid department");
-        setLoading(false);
+        setLoadingAtom({ isLoading: false });
+
         return;
       }
       if (data.department === "Male") {
         if (!data.billboardMaleId) {
           toast.error("Please select a billboard for the men's store.");
-          setLoading(false);
+          setLoadingAtom({ isLoading: false });
+
           return;
         }
         data = { ...data, billboardFemaleId: undefined };
@@ -99,7 +102,8 @@ function CategoryForm({ initialData, billboards }: CategoryFormProps) {
       if (data.department === "Female") {
         if (!data.billboardFemaleId) {
           toast.error("Please select a billboard for the women's store.");
-          setLoading(false);
+          setLoadingAtom({ isLoading: false });
+
           return;
         }
         data = { ...data, billboardMaleId: undefined };
@@ -109,7 +113,8 @@ function CategoryForm({ initialData, billboards }: CategoryFormProps) {
           toast.error(
             "Please select a billboard for both the men's and women's store."
           );
-          setLoading(false);
+          setLoadingAtom({ isLoading: false });
+
           return;
         }
       }
@@ -128,23 +133,32 @@ function CategoryForm({ initialData, billboards }: CategoryFormProps) {
       } else {
         toast.error("Something went wrong...");
       }
-      setLoading(false);
+      setLoadingAtom({ isLoading: false });
     }
   };
 
   const onDelete = async () => {
     try {
-      setLoading(true);
+      setLoadingAtom({ isLoading: true });
+
       await axios.delete(`/api/categories/${params.categoryId}`);
       router.refresh();
       toast.success("Category deleted!");
       router.replace("/categories");
-    } catch (error) {
-      toast.error(
-        "Make sure you have deleted all products using this category, first."
-      );
-      console.log("Error deleting category", error);
-      setLoading(false);
+    } catch (error: any) {
+      if (error.status === 401) {
+        toast.error(
+          error.response.data ||
+            "Something went wrong... Only admins can be authorized for this action."
+        );
+      } else {
+        toast.error(
+          "Make sure you have deleted all products using this category, first."
+        );
+        console.log("Error deleting category", error);
+      }
+
+      setLoadingAtom({ isLoading: false });
     }
   };
 
@@ -153,7 +167,7 @@ function CategoryForm({ initialData, billboards }: CategoryFormProps) {
       <AlertModal
         isOpen={open}
         action={onDelete}
-        disabled={loading}
+        disabled={isLoading}
         setOpen={() => setOpen(!open)}
         title="Are you sure you want to delete this category?"
         desc="This action cannot be reversed. This will permanently delete this category, as long as no products are using this category."
@@ -164,7 +178,7 @@ function CategoryForm({ initialData, billboards }: CategoryFormProps) {
         {initialData && (
           <Button
             variant={"destructive"}
-            disabled={loading}
+            disabled={isLoading}
             onClick={() => setOpen(true)}
           >
             <Trash></Trash>
@@ -285,7 +299,7 @@ function CategoryForm({ initialData, billboards }: CategoryFormProps) {
               </FormItem>
             )}
           />
-          <Button type="submit" disabled={loading} className="font-bold">
+          <Button type="submit" disabled={isLoading} className="font-bold">
             {initialData ? "Save Changes" : "Create Category"}
           </Button>
         </form>

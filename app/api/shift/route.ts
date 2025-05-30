@@ -1,11 +1,8 @@
 import prismadb from "@/lib/prismadb";
 import { NextResponse } from "next/server";
 
-export async function PATCH(req: Request) {
+export async function PATCH() {
   try {
-    const body = await req.json();
-    const { daysPassed } = body;
-
     const orders = await prismadb.order.findMany({
       where: {
         storeId: process.env.STORE_ID,
@@ -13,19 +10,16 @@ export async function PATCH(req: Request) {
     });
 
     orders.forEach(async (order) => {
-      const today = new Date().getDate();
-      const orderDate = new Date(order.createdAt).getDate();
-      if (today - orderDate >= daysPassed) {
-        const newOrderDate = new Date(orderDate + daysPassed);
-        await prismadb.order.update({
-          where: {
-            id: order.id,
-          },
-          data: {
-            createdAt: newOrderDate,
-          },
-        });
-      }
+      const date = new Date();
+      date.setMonth(date.getMonth() - Math.floor(Math.random() * 6));
+      await prismadb.order.update({
+        where: {
+          id: order.id,
+        },
+        data: {
+          createdAt: date,
+        },
+      });
     });
 
     const shiftDate = await prismadb.shiftDate.update({

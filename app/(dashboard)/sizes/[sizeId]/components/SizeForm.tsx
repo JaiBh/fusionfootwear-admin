@@ -29,6 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useLoadingAtom } from "@/features/global/store/useLoadingAtom";
 
 const formSchema = z.object({
   name: z
@@ -53,7 +54,7 @@ function SizeForm({ initialData }: SizeFormProps) {
   const title = initialData ? "Edit size" : "Create size";
   const desc = initialData ? "Edit existing size" : "Add a new size";
   const toastMessage = initialData ? "Size updated!" : "New size created!";
-  const [loading, setLoading] = useState(false);
+  const [{ isLoading }, setLoadingAtom] = useLoadingAtom();
   const [open, setOpen] = useState(false);
   const params = useParams();
 
@@ -68,7 +69,7 @@ function SizeForm({ initialData }: SizeFormProps) {
 
   const onSubmit = async (data: SizeFormValues) => {
     try {
-      setLoading(true);
+      setLoadingAtom({ isLoading: true });
       const departmentTypes = ["Male", "Female", "Unisex"];
       if (!departmentTypes.includes(data.department)) {
         toast.error("Please select a valid department");
@@ -83,28 +84,42 @@ function SizeForm({ initialData }: SizeFormProps) {
       router.replace("/sizes");
       toast.success(toastMessage);
     } catch (error: any) {
+      if (error.status === 401) {
+        toast.error(
+          error.response.data ||
+            "Something went wrong... Only admins can be authorized for this action."
+        );
+      }
       if (error?.request?.status !== 500) {
         toast.error(error.request?.response);
       } else {
         toast.error("Something went wrong...");
       }
-      setLoading(false);
+      setLoadingAtom({ isLoading: false });
     }
   };
 
   const onDelete = async () => {
     try {
-      setLoading(true);
+      setLoadingAtom({ isLoading: true });
       await axios.delete(`/api/sizes/${params.sizeId}`);
       router.refresh();
       toast.success("Size deleted!");
       router.replace("/sizes");
-    } catch (error) {
-      toast.error(
-        "Make sure you have deleted all products using this size, first."
-      );
-      console.log("Error deleting size", error);
-      setLoading(false);
+    } catch (error: any) {
+      if (error.status === 401) {
+        toast.error(
+          error.response.data ||
+            "Something went wrong... Only admins can be authorized for this action."
+        );
+      } else {
+        toast.error(
+          "Make sure you have deleted all products using this size, first."
+        );
+        console.log("Error deleting size", error);
+      }
+
+      setLoadingAtom({ isLoading: false });
     }
   };
 
@@ -113,7 +128,7 @@ function SizeForm({ initialData }: SizeFormProps) {
       <AlertModal
         isOpen={open}
         action={onDelete}
-        disabled={loading}
+        disabled={isLoading}
         setOpen={() => setOpen(!open)}
         title="Are you sure you want to delete this size?"
         desc="This action cannot be reversed. This will permanently delete this size, as long as no products are using this size."
@@ -124,7 +139,7 @@ function SizeForm({ initialData }: SizeFormProps) {
         {initialData && (
           <Button
             variant={"destructive"}
-            disabled={loading}
+            disabled={isLoading}
             onClick={() => setOpen(true)}
           >
             <Trash></Trash>
@@ -203,7 +218,7 @@ function SizeForm({ initialData }: SizeFormProps) {
             )}
           />
 
-          <Button type="submit" disabled={loading} className="font-bold">
+          <Button type="submit" disabled={isLoading} className="font-bold">
             {initialData ? "Save Changes" : "Create Size"}
           </Button>
         </form>

@@ -8,7 +8,7 @@ async function ProductPage({
   params: Promise<{ productId: string }>;
 }) {
   const { productId } = await params;
-  const product = await prismadb.product.findUnique({
+  const rawProduct = await prismadb.product.findUnique({
     where: {
       id: productId,
     },
@@ -17,6 +17,10 @@ async function ProductPage({
       category: true,
     },
   });
+
+  const product = rawProduct
+    ? { ...rawProduct, price: Number(rawProduct.price) }
+    : null;
 
   const productLines = await prismadb.productLine.findMany({
     where: {

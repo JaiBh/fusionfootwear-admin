@@ -159,7 +159,7 @@ function OrderInfo({ order }: OrderInfoProps) {
             return (
               <li
                 key={orderItem.id}
-                className="bg-card flex items-center justify-between py-2 px-4"
+                className="bg-card max-md:grid max-md:grid-rows-2 md:flex md:items-center md:justify-between py-2 px-4"
               >
                 <div className="flex space-x-4 items-center">
                   <div className="aspect-square relative h-20">
@@ -180,13 +180,15 @@ function OrderInfo({ order }: OrderInfoProps) {
                     </RouteLink>
                   </div>
                   <div className="space-y-3">
-                    <h3 className="font-semibold">{orderItem.name}</h3>
+                    <h3 className="font-semibold max-md:text-sm">
+                      {orderItem.name}
+                    </h3>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                       Size : {orderItem.sizeName}
                     </p>
                   </div>
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-3 max-md:flex items-center justify-between">
                   <h4 className="font-semibold text-sm">
                     ${(Number(orderItem.price) * orderItem.quantity).toFixed(2)}
                   </h4>

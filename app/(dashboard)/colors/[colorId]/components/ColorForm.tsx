@@ -23,6 +23,7 @@ import PageTitle from "@/components/PageTitle";
 import { Trash } from "lucide-react";
 import AlertModal from "@/components/AlertModal";
 import { cn } from "@/lib/utils";
+import { useLoadingAtom } from "@/features/global/store/useLoadingAtom";
 
 const formSchema = z.object({
   name: z
@@ -45,7 +46,7 @@ function ColorForm({ initialData }: ColorFormProps) {
   const title = initialData ? "Edit Color" : "Create Color";
   const desc = initialData ? "Edit existing color" : "Add a new color";
   const toastMessage = initialData ? "Color updated!" : "New color created!";
-  const [loading, setLoading] = useState(false);
+  const [{ isLoading }, setLoadingAtom] = useLoadingAtom();
   const [open, setOpen] = useState(false);
   const params = useParams();
 
@@ -59,7 +60,7 @@ function ColorForm({ initialData }: ColorFormProps) {
 
   const onSubmit = async (data: ColorFormValues) => {
     try {
-      setLoading(true);
+      setLoadingAtom({ isLoading: true });
       if (initialData) {
         await axios.patch(`/api/colors/${params.colorId}`, data);
       } else {
@@ -69,28 +70,43 @@ function ColorForm({ initialData }: ColorFormProps) {
       router.replace("/colors");
       toast.success(toastMessage);
     } catch (error: any) {
+      if (error.status === 401) {
+        toast.error(
+          error.response.data ||
+            "Something went wrong... Only admins can be authorized for this action."
+        );
+      }
       if (error?.request?.status !== 500) {
         toast.error(error.request?.response);
       } else {
         toast.error("Something went wrong...");
       }
-      setLoading(false);
+      setLoadingAtom({ isLoading: false });
     }
   };
 
   const onDelete = async () => {
     try {
-      setLoading(true);
+      setLoadingAtom({ isLoading: true });
+
       await axios.delete(`/api/colors/${params.colorId}`);
       router.refresh();
       toast.success("Color deleted!");
       router.replace("/colors");
-    } catch (error) {
-      toast.error(
-        "Make sure you have deleted all products using this color, first."
-      );
-      console.log("Error deleting color", error);
-      setLoading(false);
+    } catch (error: any) {
+      if (error.status === 401) {
+        toast.error(
+          error.response.data ||
+            "Something went wrong... Only admins can be authorized for this action."
+        );
+      } else {
+        toast.error(
+          "Make sure you have deleted all products using this color, first."
+        );
+        console.log("Error deleting color", error);
+      }
+
+      setLoadingAtom({ isLoading: false });
     }
   };
 
@@ -98,7 +114,7 @@ function ColorForm({ initialData }: ColorFormProps) {
     <>
       <AlertModal
         isOpen={open}
-        disabled={loading}
+        disabled={isLoading}
         action={onDelete}
         setOpen={() => setOpen(!open)}
         title="Are you sure you want to delete this color?"
@@ -110,7 +126,7 @@ function ColorForm({ initialData }: ColorFormProps) {
         {initialData && (
           <Button
             variant={"destructive"}
-            disabled={loading}
+            disabled={isLoading}
             onClick={() => setOpen(true)}
           >
             <Trash></Trash>
@@ -174,7 +190,7 @@ function ColorForm({ initialData }: ColorFormProps) {
             )}
           />
 
-          <Button type="submit" disabled={loading} className="font-bold">
+          <Button type="submit" disabled={isLoading} className="font-bold">
             {initialData ? "Save Changes" : "Create Color"}
           </Button>
         </form>

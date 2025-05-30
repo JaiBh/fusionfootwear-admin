@@ -185,7 +185,7 @@ export const ProductColumns: ColumnDef<ProductColumn>[] = [
           className="pl-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Product Name
+          Created At
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );

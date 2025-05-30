@@ -12,7 +12,8 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import toast from "react-hot-toast";
 import AlertModal from "@/components/AlertModal";
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { useLoadingAtom } from "@/features/global/store/useLoadingAtom";
 
 interface CellActionProps {
   data: ColorColumn;
@@ -22,10 +23,16 @@ function CellAction({ data }: CellActionProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const [_, setLoadingAtom] = useLoadingAtom();
 
   const onUpdate = () => {
-    router.push(`colors/${data.id}`);
+    setLoadingAtom({ isLoading: true });
+    startTransition(() => {
+      router.push(`colors/${data.id}`);
+    });
   };
+
   const onDelete = async () => {
     try {
       setLoading(true);

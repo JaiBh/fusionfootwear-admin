@@ -18,7 +18,7 @@ import axios from "axios";
 import { Store } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { useState } from "react";
+import { useLoadingAtom } from "@/features/global/store/useLoadingAtom";
 
 const formSchema = z.object({
   name: z
@@ -29,7 +29,7 @@ const formSchema = z.object({
 
 function SettingsForm({ store }: { store: Store | null }) {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [{ isLoading }, setLoadingAtom] = useLoadingAtom();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,17 +41,25 @@ function SettingsForm({ store }: { store: Store | null }) {
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      setLoading(true);
+      setLoadingAtom({ isLoading: true });
       await axios.patch(`/api/stores`, values);
       router.refresh();
       toast.success("Store updated!");
-    } catch (error) {
-      toast.error("Something went wrong...");
-      console.log("Error editing store name", error);
+    } catch (error: any) {
+      if (error.status === 401) {
+        toast.error(
+          error.response.data ||
+            "Something went wrong... Only admins can be authorized for this action."
+        );
+      } else {
+        toast.error("Something went wrong...");
+        console.log("Error editing store name", error);
+      }
     } finally {
-      setLoading(false);
+      setLoadingAtom({ isLoading: false });
     }
   }
+
   return (
     <div className="py-6 border-b">
       <Form {...form}>
@@ -76,7 +84,7 @@ function SettingsForm({ store }: { store: Store | null }) {
               </FormItem>
             )}
           />
-          <Button type="submit" disabled={loading}>
+          <Button type="submit" disabled={isLoading}>
             Save Changes
           </Button>
         </form>

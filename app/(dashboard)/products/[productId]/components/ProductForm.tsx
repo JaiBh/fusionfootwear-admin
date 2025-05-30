@@ -30,6 +30,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import ProductLineSelect from "@/components/ProductLineSelect";
 import DepartmentSelect from "@/components/DepartmentSelect";
+import { useLoadingAtom } from "@/features/global/store/useLoadingAtom";
 
 const formSchema = z.object({
   productLineId: z.string().min(1, "Please select a product line."),
@@ -37,7 +38,7 @@ const formSchema = z.object({
     .string()
     .min(2, "Product name must be at minimum 2 characters.")
     .max(50, "Product name must be maximum 50 characters."),
-  price: z.number().min(1, "Price must be at least 1"),
+  price: z.number().min(1, "Product price must be at minimum 1"),
   desc: z.string().min(20, "Description must be at  least 20 characters"),
   categoryId: z.string().min(1, "Please select a category."),
   department: z.string().min(1, "Please select a department."),
@@ -52,9 +53,10 @@ const formSchema = z.object({
 
 interface ProductFormProps {
   initialData:
-    | (Product & {
+    | (Omit<Product, "price"> & {
         images: Image[];
         category: Category;
+        price: number;
       })
     | null;
   categories: Category[];
@@ -77,7 +79,7 @@ function ProductForm({
   const toastMessage = initialData
     ? "Product updated!"
     : "New product created!";
-  const [loading, setLoading] = useState(false);
+  const [{ isLoading }, setLoadingAtom] = useLoadingAtom();
   const [open, setOpen] = useState(false);
   const [archiveUnits, setArchiveUnits] = useState(false);
   const [unArchiveUnits, setUnArchiveUnits] = useState(false);
@@ -94,7 +96,7 @@ function ProductForm({
       ? { ...initialData, price: parseFloat(String(initialData?.price)) }
       : {
           name: "",
-          price: undefined,
+          price: 0,
           department: "",
           desc: "",
           categoryId: "",
@@ -108,7 +110,7 @@ function ProductForm({
 
   const onSubmit = async (data: ProductFormValues) => {
     try {
-      setLoading(true);
+      setLoadingAtom({ isLoading: true });
       const departmentTypes = ["Male", "Female", "Unisex"];
       if (!departmentTypes.includes(data.department)) {
         toast.error("Please select a valid department");
@@ -135,26 +137,41 @@ function ProductForm({
       router.replace("/products");
       toast.success(toastMessage);
     } catch (error: any) {
+      if (error.status === 401) {
+        toast.error(
+          error.response.data ||
+            "Something went wrong... Only admins can be authorized for this action."
+        );
+      }
       if (error?.request?.status !== 500) {
         toast.error(error.request?.response);
       } else {
         toast.error("Something went wrong...");
       }
-      setLoading(false);
+      setLoadingAtom({ isLoading: false });
     }
   };
 
   const onDelete = async () => {
     try {
-      setLoading(true);
+      setLoadingAtom({ isLoading: true });
+
       await axios.delete(`/api/products/${params.productId}`);
       router.refresh();
       toast.success("Product deleted!");
       router.replace("/products");
-    } catch (error) {
-      toast.error("Something went wrong...");
-      console.log("Error deleting product", error);
-      setLoading(false);
+    } catch (error: any) {
+      if (error.status === 401) {
+        toast.error(
+          error.response.data ||
+            "Something went wrong... Only admins can be authorized for this action."
+        );
+      } else {
+        toast.error("Something went wrong...");
+        console.log("Error deleting product", error);
+      }
+
+      setLoadingAtom({ isLoading: false });
     }
   };
 
@@ -169,7 +186,7 @@ function ProductForm({
       <AlertModal
         isOpen={open}
         action={onDelete}
-        disabled={loading}
+        disabled={isLoading}
         setOpen={() => setOpen(!open)}
         title="Are you sure you want to delete this product?"
         desc="This action cannot be reversed. This will permanently delete this product."
@@ -180,7 +197,7 @@ function ProductForm({
         {initialData && (
           <Button
             variant={"destructive"}
-            disabled={loading}
+            disabled={isLoading}
             onClick={() => setOpen(true)}
           >
             <Trash></Trash>
@@ -281,7 +298,7 @@ function ProductForm({
                       type="number"
                       {...field}
                       onChange={(e) =>
-                        field.onChange(Number(e.target.value) || undefined)
+                        field.onChange(Number(e.target.value) || "")
                       }
                       className="border-[2px] border-secondary"
                     />
@@ -435,7 +452,7 @@ function ProductForm({
                   <FormControl>
                     <ImageUpload
                       value={field.value.map((image) => image.url)}
-                      disabled={loading}
+                      disabled={isLoading}
                       onChange={(url) => {
                         const currentValues = form.getValues("images") || []; // Get the latest value directly from the form
                         form.setValue("images", [...currentValues, { url }], {
@@ -460,7 +477,11 @@ function ProductForm({
               )}
             />
           </div>
-          <Button type="submit" disabled={loading} className="font-bold w-full">
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="font-bold w-full"
+          >
             {initialData ? "Save Changes" : "Create Product"}
           </Button>
         </form>

@@ -23,6 +23,7 @@ import PageTitle from "@/components/PageTitle";
 import { Trash } from "lucide-react";
 import ImageUpload from "@/components/ImageUpload";
 import AlertModal from "@/components/AlertModal";
+import { useLoadingAtom } from "@/features/global/store/useLoadingAtom";
 
 const formSchema = z.object({
   label: z
@@ -45,8 +46,8 @@ function BillboardForm({ initialData }: BillboardFormProps) {
   const toastMessage = initialData
     ? "Billboard updated!"
     : "New billboard created!";
-  const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [{ isLoading }, setLoadingAtom] = useLoadingAtom();
   const params = useParams();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -59,7 +60,7 @@ function BillboardForm({ initialData }: BillboardFormProps) {
 
   const onSubmit = async (data: BillboardFormValues) => {
     try {
-      setLoading(true);
+      setLoadingAtom({ isLoading: true });
       if (initialData) {
         await axios.patch(`/api/billboards/${params.billboardId}`, data);
       } else {
@@ -69,26 +70,41 @@ function BillboardForm({ initialData }: BillboardFormProps) {
       router.replace("/billboards");
       toast.success(toastMessage);
     } catch (error: any) {
+      if (error.status === 401) {
+        toast.error(
+          error.response.data ||
+            "Something went wrong... Only admins can be authorized for this action."
+        );
+      }
       if (error?.request?.status !== 500) {
         toast.error(error.request?.response);
       } else {
         toast.error("Something went wrong...");
       }
-      setLoading(false);
+      setLoadingAtom({ isLoading: false });
     }
   };
 
   const onDelete = async () => {
     try {
-      setLoading(true);
+      setLoadingAtom({ isLoading: true });
+
       await axios.delete(`/api/billboards/${params.billboardId}`);
       router.refresh();
       toast.success("Billboard deleted!");
       router.replace("/billboards");
-    } catch (error) {
-      toast.error("Something went wrong...");
-      console.log("Error deleting billboard", error);
-      setLoading(false);
+    } catch (error: any) {
+      if (error.status === 401) {
+        toast.error(
+          error.response.data ||
+            "Something went wrong... Only admins can be authorized for this action."
+        );
+      } else {
+        toast.error("Something went wrong...");
+        console.log("Error deleting billboard", error);
+      }
+
+      setLoadingAtom({ isLoading: false });
     }
   };
 
@@ -97,7 +113,7 @@ function BillboardForm({ initialData }: BillboardFormProps) {
       <AlertModal
         isOpen={open}
         action={onDelete}
-        disabled={loading}
+        disabled={isLoading}
         setOpen={() => setOpen(!open)}
         title="Are you sure you want to delete this billboard?"
         desc="This action cannot be reversed. This will permanently delete this billboard, as long as no categories are using it."
@@ -108,7 +124,7 @@ function BillboardForm({ initialData }: BillboardFormProps) {
         {initialData && (
           <Button
             variant={"destructive"}
-            disabled={loading}
+            disabled={isLoading}
             onClick={() => setOpen(true)}
           >
             <Trash></Trash>
@@ -149,7 +165,7 @@ function BillboardForm({ initialData }: BillboardFormProps) {
                 <FormControl>
                   <ImageUpload
                     value={field.value ? [field.value] : []}
-                    disabled={loading}
+                    disabled={isLoading}
                     onRemove={() => {
                       field.onChange("");
                     }}
@@ -163,7 +179,7 @@ function BillboardForm({ initialData }: BillboardFormProps) {
               </FormItem>
             )}
           />
-          <Button type="submit" disabled={loading} className="font-bold">
+          <Button type="submit" disabled={isLoading} className="font-bold">
             {initialData ? "Save Changes" : "Create Billboard"}
           </Button>
         </form>

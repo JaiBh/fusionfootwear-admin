@@ -26,6 +26,7 @@ import { CustomCheckbox } from "@/components/ui/CustomCheckbox";
 import { cn } from "@/lib/utils";
 import NumberSelect from "@/components/NumberSelect";
 import ProductSelect from "@/components/ProductSelect";
+import { useLoadingAtom } from "@/features/global/store/useLoadingAtom";
 
 const formSchema = z.object({
   quantity: z
@@ -58,7 +59,7 @@ function UnitForm({ initialData, sizes, products }: UnitFormProps) {
     ? "Edit existing unit"
     : "Add new unit(s) to product line";
   const toastMessage = initialData ? "Unit updated!" : "New unit(s) created!";
-  const [loading, setLoading] = useState(false);
+  const [{ isLoading }, setLoadingAtom] = useLoadingAtom();
   const [alertOpen, setAlertOpen] = useState(false);
   const params = useParams();
 
@@ -81,7 +82,7 @@ function UnitForm({ initialData, sizes, products }: UnitFormProps) {
 
   const onSubmit = async (data: UnitFormValues) => {
     try {
-      setLoading(true);
+      setLoadingAtom({ isLoading: true });
       if (initialData) {
         await axios.patch(`/api/units/${params.unitId}`, data);
       } else {
@@ -98,27 +99,42 @@ function UnitForm({ initialData, sizes, products }: UnitFormProps) {
       form.setValue("quantity", 1);
       toast.success(toastMessage);
     } catch (error: any) {
+      if (error.status === 401) {
+        toast.error(
+          error.response.data ||
+            "Something went wrong... Only admins can be authorized for this action."
+        );
+      }
       if (error?.request?.status !== 500) {
         toast.error(error.request?.response);
       } else {
         toast.error("Something went wrong...");
       }
     } finally {
-      setLoading(false);
+      setLoadingAtom({ isLoading: false });
     }
   };
 
   const onDelete = async () => {
     try {
-      setLoading(true);
+      setLoadingAtom({ isLoading: true });
+
       await axios.delete(`/api/units/${params.unitId}`);
       router.refresh();
       toast.success("Unit deleted!");
       router.replace("/units");
-    } catch (error) {
-      toast.error("Oops, something went wrong.");
-      console.log("Error deleting unit", error);
-      setLoading(false);
+    } catch (error: any) {
+      if (error.status === 401) {
+        toast.error(
+          error.response.data ||
+            "Something went wrong... Only admins can be authorized for this action."
+        );
+      } else {
+        toast.error("Oops, something went wrong.");
+        console.log("Error deleting unit", error);
+      }
+
+      setLoadingAtom({ isLoading: false });
     }
   };
 
@@ -127,7 +143,7 @@ function UnitForm({ initialData, sizes, products }: UnitFormProps) {
       <AlertModal
         isOpen={alertOpen}
         action={onDelete}
-        disabled={loading}
+        disabled={isLoading}
         setOpen={() => setAlertOpen(!alertOpen)}
         title="Are you sure you want to delete this unit?"
         desc="This action cannot be reversed. This will permanently delete this unit."
@@ -138,7 +154,7 @@ function UnitForm({ initialData, sizes, products }: UnitFormProps) {
         {initialData && (
           <Button
             variant={"destructive"}
-            disabled={loading}
+            disabled={isLoading}
             onClick={() => setAlertOpen(true)}
           >
             <Trash></Trash>
@@ -230,7 +246,7 @@ function UnitForm({ initialData, sizes, products }: UnitFormProps) {
               </FormItem>
             )}
           />
-          <Button type="submit" disabled={loading} className="font-bold">
+          <Button type="submit" disabled={isLoading} className="font-bold">
             {initialData ? "Save Changes" : "Create Unit(s)"}
           </Button>
         </form>

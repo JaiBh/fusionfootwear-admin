@@ -25,6 +25,7 @@ import AlertModal from "@/components/AlertModal";
 import { CustomCheckbox } from "@/components/ui/CustomCheckbox";
 import CategorySelect from "@/components/CategorySelect";
 import DepartmentSelect from "@/components/DepartmentSelect";
+import { useLoadingAtom } from "@/features/global/store/useLoadingAtom";
 
 const formSchema = z.object({
   name: z
@@ -56,7 +57,7 @@ function ProductLineForm({ initialData, categories }: ProductLineFormProps) {
   const toastMessage = initialData
     ? "Product line updated!"
     : "New product line created!";
-  const [loading, setLoading] = useState(false);
+  const [{ isLoading }, setLoadingAtom] = useLoadingAtom();
   const [open, setOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<
     Category | undefined
@@ -75,7 +76,7 @@ function ProductLineForm({ initialData, categories }: ProductLineFormProps) {
 
   const onSubmit = async (data: ProductLineFormValues) => {
     try {
-      setLoading(true);
+      setLoadingAtom({ isLoading: true });
       const departmentTypes = ["Male", "Female", "Unisex"];
       if (!departmentTypes.includes(data.department)) {
         toast.error("Please select a valid department");
@@ -90,28 +91,43 @@ function ProductLineForm({ initialData, categories }: ProductLineFormProps) {
       router.replace("/productLines");
       toast.success(toastMessage);
     } catch (error: any) {
+      if (error.status === 401) {
+        toast.error(
+          error.response.data ||
+            "Something went wrong... Only admins can be authorized for this action."
+        );
+      }
       if (error?.request?.status !== 500) {
         toast.error(error.request?.response);
       } else {
         toast.error("Something went wrong...");
       }
-      setLoading(false);
+      setLoadingAtom({ isLoading: false });
     }
   };
 
   const onDelete = async () => {
     try {
-      setLoading(true);
+      setLoadingAtom({ isLoading: true });
+
       await axios.delete(`/api/productLines/${params.productLineId}`);
       router.refresh();
       toast.success("Product Line deleted!");
       router.replace("/productLines");
-    } catch (error) {
-      toast.error(
-        "Make sure you have deleted all products using this product line, first."
-      );
-      console.log("Error deleting product-line", error);
-      setLoading(false);
+    } catch (error: any) {
+      if (error.status === 401) {
+        toast.error(
+          error.response.data ||
+            "Something went wrong... Only admins can be authorized for this action."
+        );
+      } else {
+        toast.error(
+          "Make sure you have deleted all products using this product line, first."
+        );
+        console.log("Error deleting product-line", error);
+      }
+
+      setLoadingAtom({ isLoading: false });
     }
   };
 
@@ -120,7 +136,7 @@ function ProductLineForm({ initialData, categories }: ProductLineFormProps) {
       <AlertModal
         isOpen={open}
         action={onDelete}
-        disabled={loading}
+        disabled={isLoading}
         setOpen={() => setOpen(!open)}
         title="Are you sure you want to delete this product line?"
         desc="This action cannot be reversed. This will permanently delete this product line, as long as no products are using it."
@@ -131,7 +147,7 @@ function ProductLineForm({ initialData, categories }: ProductLineFormProps) {
         {initialData && (
           <Button
             variant={"destructive"}
-            disabled={loading}
+            disabled={isLoading}
             onClick={() => setOpen(true)}
           >
             <Trash></Trash>
@@ -239,7 +255,7 @@ function ProductLineForm({ initialData, categories }: ProductLineFormProps) {
               </FormItem>
             )}
           />
-          <Button type="submit" disabled={loading} className="font-bold">
+          <Button type="submit" disabled={isLoading} className="font-bold">
             {initialData ? "Save Changes" : "Create Product Line"}
           </Button>
         </form>
