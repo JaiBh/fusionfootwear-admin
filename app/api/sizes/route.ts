@@ -64,10 +64,29 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const department = searchParams.get("department") || undefined;
 
+    if (
+      department !== "Male" &&
+      department !== "Female" &&
+      department !== "Unisex" &&
+      department !== undefined
+    ) {
+      return new NextResponse("Invalid department", {
+        status: 400,
+      });
+    }
+
     const sizes = await prismadb.size.findMany({
       where: {
-        storeId: process.env.STORE_ID,
-        department,
+        OR: [
+          {
+            storeId: process.env.STORE_ID,
+            department: department ? { in: ["Unisex", department] } : undefined,
+          },
+          {
+            storeId: process.env.STORE_ID,
+            department,
+          },
+        ],
       },
     });
 

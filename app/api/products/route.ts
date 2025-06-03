@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import prismadb from "@/lib/prismadb";
 import { isAdmin } from "@/lib/utils";
+import { stemmer } from "porter-stemmer";
 
 export async function POST(req: Request) {
   try {
@@ -105,13 +106,25 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
+    const paginate = searchParams.get("paginate");
+    const take = searchParams.get("take") || "10";
+    const cursor = searchParams.get("cursor");
     const categoryId = searchParams.get("categoryId") || undefined;
-    const colorId = searchParams.get("colorId") || undefined;
     const department = searchParams.get("department") || undefined;
+    const colorIds = searchParams.getAll("colorIds");
+    const sizeIds = searchParams.getAll("sizeIds");
+    const minPrice = searchParams.get("minPrice");
+    const maxPrice = searchParams.get("maxPrice");
+    const sortBy = searchParams.get("sortBy");
+    const searchTerm = searchParams.get("searchTerm") ?? "";
+    const stemmed = stemmer(searchTerm);
+
     let isFeatured: string | null | boolean | undefined =
       searchParams.get("isFeatured");
     let isArchived: string | null | boolean | undefined =
       searchParams.get("isArchived");
+    let includeOutOfStock: string | null | boolean | undefined =
+      searchParams.get("includeOutOfStock");
 
     if (isFeatured === "true") {
       isFeatured = true;
@@ -128,33 +141,73 @@ export async function GET(req: Request) {
     } else {
       isArchived = undefined;
     }
+
+    if (includeOutOfStock === "true") {
+      includeOutOfStock = true;
+    } else {
+      includeOutOfStock = false;
+    }
     if (
       department !== "Male" &&
       department !== "Female" &&
+      department !== "Unisex" &&
       department !== undefined
     ) {
       return new NextResponse("Invalid department", {
         status: 400,
       });
     }
+
     const products = await prismadb.product.findMany({
       where: {
         OR: [
           {
+            department: department ? { in: ["Unisex", department] } : undefined,
             storeId: process.env.STORE_ID,
-            department: "Unisex",
-            colorId,
+            name: searchTerm
+              ? { contains: stemmed, mode: "insensitive" }
+              : undefined,
             categoryId,
             isArchived,
             isFeatured,
+            colorId: colorIds.length ? { in: colorIds } : undefined,
+            price: {
+              gte: minPrice ? minPrice : 0,
+              lte: maxPrice ? maxPrice : 1000,
+            },
+            units:
+              includeOutOfStock === false
+                ? {
+                    some: {
+                      isArchived: false,
+                      sizeId: sizeIds.length ? { in: sizeIds } : undefined,
+                    },
+                  }
+                : undefined,
           },
           {
+            department: department ? { in: ["Unisex", department] } : undefined,
             storeId: process.env.STORE_ID,
-            department: department,
-            colorId,
             categoryId,
+            category: searchTerm
+              ? { name: { contains: stemmed, mode: "insensitive" } }
+              : undefined,
             isArchived,
             isFeatured,
+            colorId: colorIds.length ? { in: colorIds } : undefined,
+            price: {
+              gte: minPrice ? minPrice : 0,
+              lte: maxPrice ? maxPrice : 1000,
+            },
+            units:
+              includeOutOfStock === false
+                ? {
+                    some: {
+                      isArchived: false,
+                      sizeId: sizeIds.length ? { in: sizeIds } : undefined,
+                    },
+                  }
+                : undefined,
           },
         ],
       },
@@ -168,9 +221,98 @@ export async function GET(req: Request) {
           },
         },
       },
+      take: paginate ? Number(take) : undefined,
+      cursor: cursor ? { id: cursor } : undefined,
+      skip: paginate ? (cursor ? 1 : 0) : undefined,
+      orderBy:
+        sortBy === "a-z"
+          ? [{ name: "asc" }, { id: "desc" }]
+          : sortBy === "z-a"
+          ? [{ name: "desc" }, { id: "desc" }]
+          : sortBy === "price-high-to-low"
+          ? [{ price: "desc" }, { id: "desc" }]
+          : sortBy === "price-low-to-high"
+          ? [{ price: "asc" }, { id: "desc" }]
+          : { createdAt: "desc" },
     });
 
-    const response = NextResponse.json(products);
+    const distinctColors = await prismadb.color.findMany({
+      where: {
+        products: {
+          some: {
+            department: department ? { in: ["Unisex", department] } : undefined,
+            storeId: process.env.STORE_ID,
+            categoryId,
+            isArchived: false,
+          },
+        },
+      },
+    });
+
+    const totalCount = await prismadb.product.count({
+      where: {
+        OR: [
+          {
+            department: department ? { in: ["Unisex", department] } : undefined,
+            storeId: process.env.STORE_ID,
+            name: searchTerm
+              ? { contains: stemmed, mode: "insensitive" }
+              : undefined,
+            categoryId,
+            isArchived,
+            isFeatured,
+            colorId: colorIds.length ? { in: colorIds } : undefined,
+            price: {
+              gte: minPrice ? minPrice : 0,
+              lte: maxPrice ? maxPrice : 1000,
+            },
+            units:
+              includeOutOfStock === false
+                ? {
+                    some: {
+                      isArchived: false,
+                      sizeId: sizeIds.length ? { in: sizeIds } : undefined,
+                    },
+                  }
+                : undefined,
+          },
+          {
+            department: department ? { in: ["Unisex", department] } : undefined,
+            storeId: process.env.STORE_ID,
+            categoryId,
+            category: searchTerm
+              ? { name: { contains: stemmed, mode: "insensitive" } }
+              : undefined,
+            isArchived,
+            isFeatured,
+            colorId: colorIds.length ? { in: colorIds } : undefined,
+            price: {
+              gte: minPrice ? minPrice : 0,
+              lte: maxPrice ? maxPrice : 1000,
+            },
+            units:
+              includeOutOfStock === false
+                ? {
+                    some: {
+                      isArchived: false,
+                      sizeId: sizeIds.length ? { in: sizeIds } : undefined,
+                    },
+                  }
+                : undefined,
+          },
+        ],
+      },
+    });
+
+    const response = NextResponse.json({
+      products,
+      distinctColors,
+      totalCount,
+      nextCursor:
+        products.length === Number(take)
+          ? products[products.length - 1].id
+          : null,
+    });
 
     // Add CORS headers
     response.headers.set("Access-Control-Allow-Origin", "*");
