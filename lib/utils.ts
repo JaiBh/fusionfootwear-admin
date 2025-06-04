@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function isAdmin(userId: string) {
+export function isAdmin(userId: string | undefined | null) {
   if (userId === process.env.ADMIN_USERID) {
     return true;
   }

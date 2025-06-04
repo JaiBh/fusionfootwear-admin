@@ -19,6 +19,8 @@ import { Store } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useLoadingAtom } from "@/features/global/store/useLoadingAtom";
+import { useAuth } from "@clerk/nextjs";
+import RouteLink from "@/components/RouteLink";
 
 const formSchema = z.object({
   name: z
@@ -28,6 +30,7 @@ const formSchema = z.object({
 });
 
 function SettingsForm({ store }: { store: Store | null }) {
+  const { isSignedIn } = useAuth();
   const router = useRouter();
   const [{ isLoading }, setLoadingAtom] = useLoadingAtom();
 
@@ -84,8 +87,12 @@ function SettingsForm({ store }: { store: Store | null }) {
               </FormItem>
             )}
           />
-          <Button type="submit" disabled={isLoading}>
-            Save Changes
+          <Button type="submit" disabled={isLoading} asChild={!isSignedIn}>
+            {isSignedIn ? (
+              "Save Changes"
+            ) : (
+              <RouteLink href="/sign-in?redirect=/settings">Sign In</RouteLink>
+            )}
           </Button>
         </form>
       </Form>

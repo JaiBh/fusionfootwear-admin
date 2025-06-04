@@ -8,7 +8,7 @@ export async function PATCH(req: Request) {
     const { userId } = await auth();
     const body = await req.json();
     const { name } = body;
-    if (!userId || !isAdmin(userId)) {
+    if (!isAdmin(userId)) {
       return new NextResponse("Unauthenticated, must be admin", {
         status: 401,
       });
