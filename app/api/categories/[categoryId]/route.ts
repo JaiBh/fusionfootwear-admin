@@ -60,7 +60,7 @@ export async function PATCH(
     if (!name) {
       return new NextResponse("name is required", { status: 400 });
     }
-    if (department === "Unisex") {
+    if (department === "unisex") {
       if (!billboardMaleId || !billboardFemaleId) {
         return new NextResponse(
           "billboardMaleId and billboardFemaleId is required",
@@ -70,14 +70,14 @@ export async function PATCH(
         );
       }
     }
-    if (department === "Male") {
+    if (department === "mens") {
       if (!billboardMaleId) {
         return new NextResponse("billboardMaleId is required", {
           status: 400,
         });
       }
     }
-    if (department === "Female") {
+    if (department === "womens") {
       if (!billboardFemaleId) {
         return new NextResponse("billboardFemaleId is required", {
           status: 400,

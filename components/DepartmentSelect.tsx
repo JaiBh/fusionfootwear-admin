@@ -33,9 +33,9 @@ function DepartmentSelect({
           ))}
         {!options && (
           <>
-            <SelectItem value={"Male"}>Men's</SelectItem>
-            <SelectItem value={"Female"}>Women's</SelectItem>
-            <SelectItem value={"Unisex"}>Unisex</SelectItem>
+            <SelectItem value={"mens"}>Men's</SelectItem>
+            <SelectItem value={"womens"}>Women's</SelectItem>
+            <SelectItem value={"unisex"}>Unisex</SelectItem>
           </>
         )}
       </SelectContent>

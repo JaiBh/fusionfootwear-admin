@@ -77,7 +77,7 @@ function ProductLineForm({ initialData, categories }: ProductLineFormProps) {
   const onSubmit = async (data: ProductLineFormValues) => {
     try {
       setLoadingAtom({ isLoading: true });
-      const departmentTypes = ["Male", "Female", "Unisex"];
+      const departmentTypes = ["mens", "womens", "unisex"];
       if (!departmentTypes.includes(data.department)) {
         toast.error("Please select a valid department");
         return;
@@ -217,10 +217,10 @@ function ProductLineForm({ initialData, categories }: ProductLineFormProps) {
                   <DepartmentSelect
                     options={
                       selectedCategory
-                        ? selectedCategory.department === "Unisex"
-                          ? ["Male", "Female", "Unisex"]
+                        ? selectedCategory.department === "unisex"
+                          ? ["mens", "womens", "unisex"]
                           : [selectedCategory?.department]
-                        : ["Male", "Female", "Unisex"]
+                        : ["mens", "womens", "unisex"]
                     }
                     value={field.value ? field.value : ""}
                     onChange={(url) => field.onChange(url)}

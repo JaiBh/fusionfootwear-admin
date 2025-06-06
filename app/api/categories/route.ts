@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     if (!name) {
       return new NextResponse("Name is required", { status: 400 });
     }
-    if (department === "Unisex") {
+    if (department === "unisex") {
       if (!billboardMaleId || !billboardFemaleId) {
         return new NextResponse(
           "billboardMaleId and billboardFemaleId is required",
@@ -27,14 +27,14 @@ export async function POST(req: Request) {
         );
       }
     }
-    if (department === "Male") {
+    if (department === "mens") {
       if (!billboardMaleId) {
         return new NextResponse("billboardMaleId is required", {
           status: 400,
         });
       }
     }
-    if (department === "Female") {
+    if (department === "womens") {
       if (!billboardFemaleId) {
         return new NextResponse("billboardFemaleId is required", {
           status: 400,
@@ -77,8 +77,8 @@ export async function GET(req: Request) {
     let isArchived: boolean | string | null | undefined =
       searchParams.get("isArchived");
 
-    if (department !== "Male" && department !== "Female") {
-      return new NextResponse("Department must be Male or Female", {
+    if (department !== "mens" && department !== "womens") {
+      return new NextResponse("Department must be mens or womens", {
         status: 400,
       });
     }
@@ -94,7 +94,7 @@ export async function GET(req: Request) {
     const categories = await prismadb.category.findMany({
       where: {
         OR: [
-          { storeId: process.env.STORE_ID, department: "Unisex", isArchived },
+          { storeId: process.env.STORE_ID, department: "unisex", isArchived },
           { storeId: process.env.STORE_ID, department: department, isArchived },
         ],
       },

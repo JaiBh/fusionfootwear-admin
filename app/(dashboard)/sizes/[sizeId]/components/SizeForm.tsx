@@ -70,7 +70,7 @@ function SizeForm({ initialData }: SizeFormProps) {
   const onSubmit = async (data: SizeFormValues) => {
     try {
       setLoadingAtom({ isLoading: true });
-      const departmentTypes = ["Male", "Female", "Unisex"];
+      const departmentTypes = ["mens", "womens", "unisex"];
       if (!departmentTypes.includes(data.department)) {
         toast.error("Please select a valid department");
         return;
@@ -204,9 +204,9 @@ function SizeForm({ initialData }: SizeFormProps) {
                       <SelectValue placeholder="Select department below" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value={"Male"}>Men's</SelectItem>
-                      <SelectItem value={"Female"}>Women's</SelectItem>
-                      <SelectItem value={"Unisex"}>Both</SelectItem>
+                      <SelectItem value={"mens"}>Men's</SelectItem>
+                      <SelectItem value={"womens"}>Women's</SelectItem>
+                      <SelectItem value={"unisex"}>Both</SelectItem>
                     </SelectContent>
                   </Select>
                 </FormControl>

@@ -74,23 +74,23 @@ function CategoryForm({ initialData, billboards }: CategoryFormProps) {
   });
 
   const showMaleBillboardSelect =
-    form.watch("department") === "Male" ||
-    form.getValues().department === "Unisex";
+    form.watch("department") === "mens" ||
+    form.getValues().department === "unisex";
   const showFemaleBillboardSelect =
-    form.watch("department") === "Female" ||
-    form.getValues().department === "Unisex";
+    form.watch("department") === "womens" ||
+    form.getValues().department === "unisex";
 
   const onSubmit = async (data: CategoryFormValues) => {
     try {
       setLoadingAtom({ isLoading: true });
-      const departmentTypes = ["Male", "Female", "Unisex"];
+      const departmentTypes = ["mens", "womens", "unisex"];
       if (!departmentTypes.includes(data.department)) {
         toast.error("Please select a valid department");
         setLoadingAtom({ isLoading: false });
 
         return;
       }
-      if (data.department === "Male") {
+      if (data.department === "mens") {
         if (!data.billboardMaleId) {
           toast.error("Please select a billboard for the men's store.");
           setLoadingAtom({ isLoading: false });
@@ -99,7 +99,7 @@ function CategoryForm({ initialData, billboards }: CategoryFormProps) {
         }
         data = { ...data, billboardFemaleId: undefined };
       }
-      if (data.department === "Female") {
+      if (data.department === "womens") {
         if (!data.billboardFemaleId) {
           toast.error("Please select a billboard for the women's store.");
           setLoadingAtom({ isLoading: false });
@@ -108,7 +108,7 @@ function CategoryForm({ initialData, billboards }: CategoryFormProps) {
         }
         data = { ...data, billboardMaleId: undefined };
       }
-      if (data.department === "Unisex") {
+      if (data.department === "unisex") {
         if (!data.billboardFemaleId || !data.billboardMaleId) {
           toast.error(
             "Please select a billboard for both the men's and women's store."

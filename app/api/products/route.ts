@@ -148,9 +148,9 @@ export async function GET(req: Request) {
       includeOutOfStock = false;
     }
     if (
-      department !== "Male" &&
-      department !== "Female" &&
-      department !== "Unisex" &&
+      department !== "mens" &&
+      department !== "womens" &&
+      department !== "unisex" &&
       department !== undefined
     ) {
       return new NextResponse("Invalid department", {
@@ -162,7 +162,7 @@ export async function GET(req: Request) {
       where: {
         OR: [
           {
-            department: department ? { in: ["Unisex", department] } : undefined,
+            department: department ? { in: ["unisex", department] } : undefined,
             storeId: process.env.STORE_ID,
             name: searchTerm
               ? { contains: stemmed, mode: "insensitive" }
@@ -186,7 +186,7 @@ export async function GET(req: Request) {
                 : undefined,
           },
           {
-            department: department ? { in: ["Unisex", department] } : undefined,
+            department: department ? { in: ["unisex", department] } : undefined,
             storeId: process.env.STORE_ID,
             categoryId,
             category: searchTerm
@@ -240,7 +240,7 @@ export async function GET(req: Request) {
       where: {
         products: {
           some: {
-            department: department ? { in: ["Unisex", department] } : undefined,
+            department: department ? { in: ["unisex", department] } : undefined,
             storeId: process.env.STORE_ID,
             categoryId,
             isArchived: false,
@@ -253,7 +253,7 @@ export async function GET(req: Request) {
       where: {
         OR: [
           {
-            department: department ? { in: ["Unisex", department] } : undefined,
+            department: department ? { in: ["unisex", department] } : undefined,
             storeId: process.env.STORE_ID,
             name: searchTerm
               ? { contains: stemmed, mode: "insensitive" }
@@ -277,7 +277,7 @@ export async function GET(req: Request) {
                 : undefined,
           },
           {
-            department: department ? { in: ["Unisex", department] } : undefined,
+            department: department ? { in: ["unisex", department] } : undefined,
             storeId: process.env.STORE_ID,
             categoryId,
             category: searchTerm

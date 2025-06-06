@@ -65,9 +65,9 @@ export async function GET(req: Request) {
     const department = searchParams.get("department") || undefined;
 
     if (
-      department !== "Male" &&
-      department !== "Female" &&
-      department !== "Unisex" &&
+      department !== "mens" &&
+      department !== "womens" &&
+      department !== "unisex" &&
       department !== undefined
     ) {
       return new NextResponse("Invalid department", {
@@ -80,7 +80,7 @@ export async function GET(req: Request) {
         OR: [
           {
             storeId: process.env.STORE_ID,
-            department: department ? { in: ["Unisex", department] } : undefined,
+            department: department ? { in: ["unisex", department] } : undefined,
           },
           {
             storeId: process.env.STORE_ID,
