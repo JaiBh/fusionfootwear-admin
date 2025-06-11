@@ -10,7 +10,9 @@ function AdjustOrderDates({ shiftDate }: { shiftDate: ShiftDate | null }) {
       if (shiftDate) {
         const today = new Date();
         const shiftDay = new Date(shiftDate.createdAt);
-        if (today.getDate() !== shiftDay.getDate()) {
+        const diffMs = today.getTime() - shiftDay.getTime();
+        const daysPassed = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        if (daysPassed > 0) {
           await axios.patch("/api/shift");
         }
       }
