@@ -5,6 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import ToastProvider from "@/providers/ToastProvider";
 import LoadingClientWrapper from "@/components/LoadingClientWrapper";
+import DemoDataRefresher from "@/components/DemoDataRefresher";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,7 +43,10 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <ToastProvider></ToastProvider>
-            <LoadingClientWrapper>{children}</LoadingClientWrapper>
+            <LoadingClientWrapper>
+              <DemoDataRefresher></DemoDataRefresher>
+              {children}
+            </LoadingClientWrapper>
           </ThemeProvider>
         </body>
       </html>

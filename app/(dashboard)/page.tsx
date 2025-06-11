@@ -2,7 +2,6 @@ import { getProductsInStock } from "@/actions/getProductsInStock";
 import { getProductsOutOfStock } from "@/actions/getProductsOutOfStock";
 import { getRevenueGraphData } from "@/actions/getRevenueGraphData";
 import Container from "@/components/Container";
-import AdjustOrderDates from "@/components/overview/AdjustOrderDates";
 import ProductsInStockCard from "@/components/overview/ProductsInStockCard";
 import ProductsOutStockCard from "@/components/overview/ProductsOutOfStockCard";
 import RevenueGraph from "@/components/overview/RevenueGraph";
@@ -32,11 +31,6 @@ async function OverviewPage() {
       }),
     };
   });
-  const shiftDate = await prismadb.shiftDate.findUnique({
-    where: {
-      id: "123",
-    },
-  });
 
   const productsInStock = await getProductsInStock();
   const productsOutOfStock = await getProductsOutOfStock();
@@ -44,7 +38,6 @@ async function OverviewPage() {
 
   return (
     <>
-      <AdjustOrderDates shiftDate={shiftDate}></AdjustOrderDates>
       <Container>
         <div className="max-md:text-center mt-8 mb-4 space-y-1">
           <h1 className="text-xl md:text-2xl font-bold">Dashboard</h1>
