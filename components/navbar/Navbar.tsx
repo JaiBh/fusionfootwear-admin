@@ -2,8 +2,9 @@ import { UserButton } from "@clerk/nextjs";
 import StoreName from "./StoreName";
 import Sidebar from "../sidebar/Sidebar";
 import { ThemeToggle } from "../ThemeToggle";
+import SignInDropdown from "./SignInDropdown";
 
-function Navbar() {
+async function Navbar() {
   return (
     <nav className={"top-0 left-0 w-screen border-b bg-secondary z-10"}>
       <div className="flex justify-between items-center py-4 max-w-[1440px] mx-auto w-[90vw]">
@@ -14,6 +15,7 @@ function Navbar() {
         <div className="flex items-center gap-4">
           <ThemeToggle></ThemeToggle>
           <UserButton></UserButton>
+          <SignInDropdown></SignInDropdown>
         </div>
       </div>
     </nav>
