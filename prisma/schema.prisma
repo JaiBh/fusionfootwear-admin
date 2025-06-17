@@ -109,6 +109,7 @@ model Product{
   price Decimal
   desc String
   productLineId String
+  keywords String[]
   productLine ProductLine @relation("ProductLineToProduct",fields:[productLineId],references: [id])
   isArchived Boolean
   isFeatured Boolean

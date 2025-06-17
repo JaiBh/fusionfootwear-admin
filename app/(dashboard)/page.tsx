@@ -46,7 +46,7 @@ async function OverviewPage() {
           </p>
         </div>
         <Separator></Separator>
-        <ul className="my-6 grid md:grid-cols-2 gap-4">
+        <ul className="my-6 grid sm:grid-cols-2 gap-4 lg:grid-cols-4">
           <TotalRevenueCard orders={orders}></TotalRevenueCard>
           <TotalUnitSalesCard orders={orders}></TotalUnitSalesCard>
           <ProductsInStockCard
