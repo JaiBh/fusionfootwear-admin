@@ -18,8 +18,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FusionFootwear Admin",
-  description: "Admin dashboard for FusionFootwear store",
+  title: "FusionFootwear Admin Dashboard",
+  description:
+    "Full-featured admin panel for managing FusionFootwear products, categories, inventory, and analytics. Built with Next.js, Prisma, ShadCN UI, and PostgreSQL.",
   icons: {
     icon: "/favicon.ico",
   },
