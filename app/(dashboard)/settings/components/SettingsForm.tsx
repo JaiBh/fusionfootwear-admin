@@ -46,7 +46,6 @@ function SettingsForm({ store }: { store: Store | null }) {
     try {
       setLoadingAtom({ isLoading: true });
       await axios.patch(`/api/stores`, values);
-
       router.refresh();
       toast.success("Store updated!");
     } catch (error: any) {
