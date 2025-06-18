@@ -21,7 +21,7 @@ A full-stack admin panel for managing the FusionFootwear e-commerce store. Built
 
 ## 🛠 Tech Stack
 
-- **Framework:** Next.js 15, React 19
+- **Framework:** Next.js 14, React 19
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS, ShadCN UI
 - **Auth:** Clerk
