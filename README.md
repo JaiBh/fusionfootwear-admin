@@ -60,7 +60,7 @@ npm run dev
 ## 📁 Project Structure
 
 ```
-src/
+/
 ├── app/              # App routes and pages
 ├── components/       # UI components
 ├── lib/              # Helpers and config utils
