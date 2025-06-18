@@ -13,7 +13,7 @@ A full-stack admin panel for managing the FusionFootwear e-commerce store. Built
 - Full CRUD for products, categories, billboards, colors, and sizes
 - Image upload with preview using Cloudinary
 - Toggle featured and archived status for products
-- Live inventory display”
+- Live inventory display
 - Dashboard with visual metrics and insights
 - Secure route protection with Clerk
 
