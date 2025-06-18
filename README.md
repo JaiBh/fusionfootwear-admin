@@ -106,7 +106,7 @@ NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 
 ## 🧑‍💻 Author
 
-Built by [**Jai Bhullar**](https://jaibh-portfolio.vercel.app/) – aspiring front-end/full-stack developer based in London.
+Built by [**Jai Bhullar**](https://jaibh-portfolio.vercel.app/) – aspiring front-end/full-stack developer based near London.
 
 📫 Email: jaibhullar.developer@outlook.com
 
