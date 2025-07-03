@@ -20,7 +20,7 @@ function BillboardSelect({
 }: BillboardSelectProps) {
   return (
     <Select onValueChange={onChange} value={value}>
-      <SelectTrigger value={value}>
+      <SelectTrigger value={value} aria-labelledby="billboardLabel">
         <SelectValue placeholder="Select a billboard" />
       </SelectTrigger>
       <SelectContent>

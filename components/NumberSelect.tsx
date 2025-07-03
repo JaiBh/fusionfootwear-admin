@@ -19,7 +19,7 @@ function NumberSelect({ value, onChange, min, max }: NumberSelectProps) {
   }));
   return (
     <Select onValueChange={onChange} value={value.toString()}>
-      <SelectTrigger value={value}>
+      <SelectTrigger value={value} aria-labelledby="quantityLabel">
         <SelectValue placeholder="Select number of units" />
       </SelectTrigger>
       <SelectContent>

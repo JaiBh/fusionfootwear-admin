@@ -16,7 +16,7 @@ interface ColorSelectProps {
 function ColorSelect({ value, onChange, colors }: ColorSelectProps) {
   return (
     <Select onValueChange={onChange} value={value}>
-      <SelectTrigger value={value}>
+      <SelectTrigger value={value} aria-labelledby="colorLabel">
         <SelectValue placeholder="Select a color" />
       </SelectTrigger>
       <SelectContent>
@@ -24,7 +24,7 @@ function ColorSelect({ value, onChange, colors }: ColorSelectProps) {
           return (
             <SelectItem key={color.id} value={color.id}>
               <div className="flex items-center gap-2">
-                <span>{color.name}</span>
+                {color.name}
                 <span
                   className="size-2 rounded-[50%]"
                   style={{ background: color.value }}

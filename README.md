@@ -16,6 +16,7 @@ A full-stack admin panel for managing the FusionFootwear e-commerce store. Built
 - Live inventory display
 - Dashboard with visual metrics and insights
 - Secure route protection with Clerk
+- Comprehensive form testing with Jest and React Testing Library
 
 ---
 
@@ -27,6 +28,7 @@ A full-stack admin panel for managing the FusionFootwear e-commerce store. Built
 - **Auth:** Clerk
 - **ORM:** Prisma
 - **Database:** PostgreSQL (hosted on NeonDB)
+- **Testing:** Jest, React Testing Library
 - **Deployment:** Vercel
 
 ---
@@ -98,7 +100,7 @@ NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 - [x] Product management UI
 - [x] Billboard, category, color and size CRUD
 - [x] Clerk auth integration
-- [ ] Role-based admin access
+- [x] Comprehensive testing of forms and CRUD operations
 - [ ] Live inventory management
 - [ ] Advanced sales analytics (charts & trends)
 

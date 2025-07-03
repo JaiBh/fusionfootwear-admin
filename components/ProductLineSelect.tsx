@@ -24,7 +24,7 @@ function ProductLineSelect({
 }: ProductLineSelectProps) {
   return (
     <Select onValueChange={onChange} value={value} disabled={disabled}>
-      <SelectTrigger value={value}>
+      <SelectTrigger value={value} aria-labelledby="productLineLabel">
         <SelectValue placeholder="Select a product line" />
       </SelectTrigger>
       <SelectContent>

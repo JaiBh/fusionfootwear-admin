@@ -21,7 +21,7 @@ function DepartmentSelect({
 }: DepartmentSelectProps) {
   return (
     <Select onValueChange={onChange} value={value} disabled={disabled}>
-      <SelectTrigger value={value}>
+      <SelectTrigger value={value} aria-labelledby="departmentLabel">
         <SelectValue placeholder="Select a department" />
       </SelectTrigger>
       <SelectContent>
@@ -33,8 +33,8 @@ function DepartmentSelect({
           ))}
         {!options && (
           <>
-            <SelectItem value={"mens"}>Men's</SelectItem>
-            <SelectItem value={"womens"}>Women's</SelectItem>
+            <SelectItem value={"mens"}>Mens</SelectItem>
+            <SelectItem value={"womens"}>Womens</SelectItem>
             <SelectItem value={"unisex"}>Unisex</SelectItem>
           </>
         )}

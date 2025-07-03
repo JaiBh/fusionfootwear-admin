@@ -171,6 +171,7 @@ function UnitForm({ initialData, sizes, products }: UnitFormProps) {
             name="productId"
             render={({ field }) => (
               <FormItem>
+                <FormLabel id="productLabel">Product</FormLabel>
                 <FormControl>
                   <ProductSelect
                     value={field.value ? field.value : ""}
@@ -188,7 +189,7 @@ function UnitForm({ initialData, sizes, products }: UnitFormProps) {
             name="sizeId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Size</FormLabel>
+                <FormLabel id="sizeLabel">Size</FormLabel>
                 <FormControl>
                   <SizeSelect
                     value={field.value ? field.value : ""}
@@ -209,7 +210,9 @@ function UnitForm({ initialData, sizes, products }: UnitFormProps) {
               name="quantity"
               render={({ field }) => (
                 <FormItem className={cn(initialData && "")}>
-                  <FormLabel>Number of units to add</FormLabel>
+                  <FormLabel id="quantityLabel">
+                    Number of units to add
+                  </FormLabel>
                   <FormControl>
                     <NumberSelect
                       value={field.value ? field.value : 1}

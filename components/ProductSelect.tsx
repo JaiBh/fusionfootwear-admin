@@ -25,7 +25,7 @@ function ProductSelect({
 }: ProductSelectProps) {
   return (
     <Select onValueChange={onChange} value={value} disabled={disabled}>
-      <SelectTrigger value={value}>
+      <SelectTrigger value={value} aria-labelledby="productLabel">
         <SelectValue placeholder="Select a product" />
       </SelectTrigger>
       <SelectContent>

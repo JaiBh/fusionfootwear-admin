@@ -34,21 +34,18 @@ import { useLoadingAtom } from "@/features/global/store/useLoadingAtom";
 
 const formSchema = z.object({
   productLineId: z.string().min(1, "Please select a product line."),
-  name: z
-    .string()
-    .min(2, "Product name must be at minimum 2 characters.")
-    .max(50, "Product name must be maximum 50 characters."),
+  name: z.string(),
   price: z.number().min(1, "Product price must be at minimum 1"),
   desc: z.string().min(20, "Description must be at  least 20 characters"),
-  categoryId: z.string().min(1, "Please select a category."),
-  department: z.string().min(1, "Please select a department."),
+  categoryId: z.string(),
+  department: z.string(),
   colorId: z.string().min(1, "Please select a color."),
   isArchived: z.boolean(),
   isFeatured: z.boolean(),
   images: z
     .object({ url: z.string() })
     .array()
-    .min(2, "Please provide at least 2 images for the product."),
+    .min(1, "Please provide at least 1 image for the product."),
 });
 
 interface ProductFormProps {
@@ -64,6 +61,7 @@ interface ProductFormProps {
   productLines: (ProductLine & {
     category: Category;
   })[];
+  defaultImages?: [{ url: string }];
 }
 
 type ProductFormValues = z.infer<typeof formSchema>;
@@ -73,6 +71,7 @@ function ProductForm({
   categories,
   colors,
   productLines,
+  defaultImages,
 }: ProductFormProps) {
   const title = initialData ? "Edit Product" : "Create Product";
   const desc = initialData ? "Edit existing product" : "Add a new product";
@@ -81,8 +80,6 @@ function ProductForm({
     : "New product created!";
   const [{ isLoading }, setLoadingAtom] = useLoadingAtom();
   const [open, setOpen] = useState(false);
-  const [archiveUnits, setArchiveUnits] = useState(false);
-  const [unArchiveUnits, setUnArchiveUnits] = useState(false);
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<
@@ -104,7 +101,7 @@ function ProductForm({
           colorId: "",
           isFeatured: false,
           isArchived: false,
-          images: [],
+          images: defaultImages || [],
         },
   });
 
@@ -117,19 +114,7 @@ function ProductForm({
         return;
       }
       if (initialData) {
-        await axios.patch(`/api/products/${params.productId}`, data);
-        if (archiveUnits) {
-          await axios.patch("/api/units", {
-            action: "archive",
-            productId: initialData.id,
-          });
-        }
-        if (unArchiveUnits) {
-          await axios.patch("/api/units", {
-            action: "unarchive",
-            productId: initialData.id,
-          });
-        }
+        await axios.patch(`/api/products/${initialData.id}`, data);
       } else {
         await axios.post(`/api/products`, data);
       }
@@ -214,7 +199,7 @@ function ProductForm({
             name="productLineId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Product Line</FormLabel>
+                <FormLabel id="productLineLabel">Product Line</FormLabel>
                 <FormControl>
                   <ProductLineSelect
                     value={field.value ? field.value : ""}
@@ -292,9 +277,10 @@ function ProductForm({
               name="price"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Price (dollars)</FormLabel>
+                  <FormLabel htmlFor="price">Price (dollars)</FormLabel>
                   <FormControl>
                     <Input
+                      id="price"
                       type="number"
                       {...field}
                       onChange={(e) =>
@@ -313,7 +299,7 @@ function ProductForm({
               name="categoryId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Category</FormLabel>
+                  <FormLabel id="categoryLabel">Category</FormLabel>
                   <FormControl>
                     <CategorySelect
                       value={field.value ? field.value : ""}
@@ -339,7 +325,7 @@ function ProductForm({
               name="department"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Department</FormLabel>
+                  <FormLabel id="departmentLabel">Department</FormLabel>
                   <FormControl>
                     <DepartmentSelect
                       options={
@@ -368,7 +354,7 @@ function ProductForm({
               name="colorId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Color</FormLabel>
+                  <FormLabel id="colorLabel">Color</FormLabel>
                   <FormControl>
                     <ColorSelect
                       value={field.value ? field.value : ""}
@@ -423,24 +409,6 @@ function ProductForm({
                   </FormItem>
                 )}
               />
-              {initialData && (
-                <CustomCheckbox
-                  value={archiveUnits}
-                  label="Archive all units"
-                  disabled={unArchiveUnits === true}
-                  text="This will archive all units under this product-line that are not already archived."
-                  onChange={(value) => setArchiveUnits(value === "true")}
-                ></CustomCheckbox>
-              )}
-              {initialData && (
-                <CustomCheckbox
-                  value={unArchiveUnits}
-                  disabled={archiveUnits === true}
-                  label="Un-archive all units"
-                  text="This will un-archive all units under this product-line that are currently archived."
-                  onChange={(value) => setUnArchiveUnits(value === "true")}
-                ></CustomCheckbox>
-              )}
             </div>
 
             <FormField

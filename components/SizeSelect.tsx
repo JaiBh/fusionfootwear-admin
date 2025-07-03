@@ -16,7 +16,7 @@ interface SizeSelectProps {
 function SizeSelect({ value, onChange, sizes }: SizeSelectProps) {
   return (
     <Select onValueChange={onChange} value={value}>
-      <SelectTrigger value={value}>
+      <SelectTrigger value={value} aria-labelledby="sizeLabel">
         <SelectValue placeholder="Select a size" />
       </SelectTrigger>
       <SelectContent>

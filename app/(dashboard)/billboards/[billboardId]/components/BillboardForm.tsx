@@ -35,11 +35,12 @@ const formSchema = z.object({
 
 interface BillboardFormProps {
   initialData: Billboard | null;
+  defaultImage?: string;
 }
 
 type BillboardFormValues = z.infer<typeof formSchema>;
 
-function BillboardForm({ initialData }: BillboardFormProps) {
+function BillboardForm({ initialData, defaultImage }: BillboardFormProps) {
   const router = useRouter();
   const title = initialData ? "Edit Billboard" : "Create Billboard";
   const desc = initialData ? "Edit existing billboard" : "Add a new billboard";
@@ -54,7 +55,7 @@ function BillboardForm({ initialData }: BillboardFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
       label: "",
-      imageUrl: "",
+      imageUrl: defaultImage || "",
     },
   });
 

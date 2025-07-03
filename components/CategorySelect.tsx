@@ -22,7 +22,7 @@ function CategorySelect({
 }: CategorySelectProps) {
   return (
     <Select onValueChange={onChange} value={value} disabled={disabled}>
-      <SelectTrigger value={value}>
+      <SelectTrigger value={value} aria-labelledby="categoryLabel">
         <SelectValue placeholder="Select a category" />
       </SelectTrigger>
       <SelectContent>

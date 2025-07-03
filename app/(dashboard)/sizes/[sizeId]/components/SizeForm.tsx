@@ -22,14 +22,8 @@ import { Size } from "@prisma/client";
 import PageTitle from "@/components/PageTitle";
 import { Trash } from "lucide-react";
 import AlertModal from "@/components/AlertModal";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useLoadingAtom } from "@/features/global/store/useLoadingAtom";
+import DepartmentSelect from "@/components/DepartmentSelect";
 
 const formSchema = z.object({
   name: z
@@ -40,7 +34,7 @@ const formSchema = z.object({
     .string()
     .min(1, "Size value must be at minimum 1 character")
     .max(50, "Size value must be maximum 20 characters"),
-  department: z.string().min(1),
+  department: z.string().min(1, "Please select a department"),
 });
 
 interface SizeFormProps {
@@ -194,21 +188,14 @@ function SizeForm({ initialData }: SizeFormProps) {
             name="department"
             render={({ field }) => (
               <FormItem className="max-w-80">
-                <FormLabel>Department</FormLabel>
+                <FormLabel id="departmentLabel">Department</FormLabel>
                 <FormControl>
-                  <Select
-                    onValueChange={(value) => field.onChange(value)}
-                    value={field.value}
-                  >
-                    <SelectTrigger value={field.value}>
-                      <SelectValue placeholder="Select department below" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value={"mens"}>Men's</SelectItem>
-                      <SelectItem value={"womens"}>Women's</SelectItem>
-                      <SelectItem value={"unisex"}>Both</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <DepartmentSelect
+                    value={field.value ? field.value : ""}
+                    onChange={(url) => {
+                      field.onChange(url);
+                    }}
+                  ></DepartmentSelect>
                 </FormControl>
                 <FormDescription>
                   Is this size for men's or women's products or both?

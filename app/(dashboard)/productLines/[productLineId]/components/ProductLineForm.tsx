@@ -33,7 +33,7 @@ const formSchema = z.object({
     .min(2, "Product line name must be at minimum 2 characters")
     .max(50, "Product line name must be maximum 50 characters"),
   categoryId: z.string().min(1, "Please select a category"),
-  department: z.string().min(1, "Please select a sex."),
+  department: z.string().min(1, "Please select a department."),
   isArchived: z.boolean(),
 });
 
@@ -167,7 +167,7 @@ function ProductLineForm({ initialData, categories }: ProductLineFormProps) {
                 <FormLabel>Name</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Category name"
+                    placeholder="Product Line name"
                     {...field}
                     className="border-[2px] border-secondary"
                   />
@@ -184,7 +184,7 @@ function ProductLineForm({ initialData, categories }: ProductLineFormProps) {
             name="categoryId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Category</FormLabel>
+                <FormLabel id="categoryLabel">Category</FormLabel>
                 <FormControl>
                   <CategorySelect
                     value={field.value ? field.value : ""}
@@ -212,7 +212,7 @@ function ProductLineForm({ initialData, categories }: ProductLineFormProps) {
             name="department"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Department</FormLabel>
+                <FormLabel id="departmentLabel">Department</FormLabel>
                 <FormControl>
                   <DepartmentSelect
                     options={

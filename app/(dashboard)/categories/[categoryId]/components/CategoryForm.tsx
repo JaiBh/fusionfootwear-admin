@@ -34,7 +34,7 @@ const formSchema = z.object({
     .max(50, "Category name must be maximum 50 characters"),
   billboardMaleId: z.string().optional(),
   billboardFemaleId: z.string().optional(),
-  department: z.string().min(1, "Please select a sex."),
+  department: z.string().min(1, "Please select a department."),
   isArchived: z.boolean(),
 });
 
@@ -92,7 +92,7 @@ function CategoryForm({ initialData, billboards }: CategoryFormProps) {
       }
       if (data.department === "mens") {
         if (!data.billboardMaleId) {
-          toast.error("Please select a billboard for the men's store.");
+          toast.error("Please select a billboard for the mens store.");
           setLoadingAtom({ isLoading: false });
 
           return;
@@ -101,7 +101,7 @@ function CategoryForm({ initialData, billboards }: CategoryFormProps) {
       }
       if (data.department === "womens") {
         if (!data.billboardFemaleId) {
-          toast.error("Please select a billboard for the women's store.");
+          toast.error("Please select a billboard for the womens store.");
           setLoadingAtom({ isLoading: false });
 
           return;
@@ -111,7 +111,7 @@ function CategoryForm({ initialData, billboards }: CategoryFormProps) {
       if (data.department === "unisex") {
         if (!data.billboardFemaleId || !data.billboardMaleId) {
           toast.error(
-            "Please select a billboard for both the men's and women's store."
+            "Please select a billboard for both the mens and womens store."
           );
           setLoadingAtom({ isLoading: false });
 
@@ -215,7 +215,7 @@ function CategoryForm({ initialData, billboards }: CategoryFormProps) {
             name="department"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Department</FormLabel>
+                <FormLabel id="departmentLabel">Department</FormLabel>
                 <FormControl>
                   <DepartmentSelect
                     value={field.value ? field.value : ""}
@@ -225,8 +225,8 @@ function CategoryForm({ initialData, billboards }: CategoryFormProps) {
                   ></DepartmentSelect>
                 </FormControl>
                 <FormDescription>
-                  This will determine if this category is shown in the men's
-                  store, women's store (or both if unisex is selected).
+                  This will determine if this category is shown in the mens
+                  store, womens store (or both if unisex is selected).
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -238,7 +238,9 @@ function CategoryForm({ initialData, billboards }: CategoryFormProps) {
               name="billboardMaleId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Billboard for men's store</FormLabel>
+                  <FormLabel id="billboardLabel">
+                    Billboard for mens store
+                  </FormLabel>
                   <FormControl>
                     <BillboardSelect
                       value={field.value ? field.value : ""}
@@ -248,7 +250,7 @@ function CategoryForm({ initialData, billboards }: CategoryFormProps) {
                   </FormControl>
                   <FormDescription>
                     This is the billboard that will be displayed on the category
-                    page for the men's store.
+                    page for the mens store.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -261,7 +263,9 @@ function CategoryForm({ initialData, billboards }: CategoryFormProps) {
               name="billboardFemaleId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Billboard for women's store</FormLabel>
+                  <FormLabel id="billboardLabel">
+                    Billboard for womens store
+                  </FormLabel>
                   <FormControl>
                     <BillboardSelect
                       value={field.value ? field.value : ""}
@@ -271,7 +275,7 @@ function CategoryForm({ initialData, billboards }: CategoryFormProps) {
                   </FormControl>
                   <FormDescription>
                     This is the billboard that will be displayed on the category
-                    page for the women's store.
+                    page for the womens store.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
